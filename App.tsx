@@ -1,19 +1,24 @@
-import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
-import { StatusBar } from "expo-status-bar";
-import { AppRegistry, StyleSheet, Text, View } from "react-native";
-import { NavigationContainer } from "@react-navigation/native";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import {
+  ApolloClient,
+  ApolloProvider,
+  HttpLink,
+  InMemoryCache,
+} from "@apollo/client";
 import Ionicons from "@expo/vector-icons/Ionicons";
-
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { NavigationContainer } from "@react-navigation/native";
+import React from "react";
+import { AppRegistry } from "react-native";
+import HomeScreen from "./screens/HomeScreen";
 import ProjectScreen from "./screens/ProjectScreen";
 import TaskScreen from "./screens/TaskScreen";
-import HomeScreen from "./screens/HomeScreen";
 
 const Tab = createBottomTabNavigator();
+const link = new HttpLink({ uri: "http://192.168.1.21:4000" });
 
 // Initialize Apollo Client
 const client = new ApolloClient({
-  uri: "localhost:4000/graphql",
+  link,
   cache: new InMemoryCache(),
 });
 
@@ -52,7 +57,5 @@ export default function App() {
     </ApolloProvider>
   );
 }
-
-const styles = StyleSheet.create({});
 
 AppRegistry.registerComponent("Paprika", () => App);

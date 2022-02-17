@@ -15,6 +15,7 @@ export type Scalars = {
   Float: number;
   /** Date custom scalar type */
   Date: any;
+  Upload: any;
 };
 
 export type Comment = {
@@ -31,6 +32,26 @@ export type CommentInput = {
   taskId: Scalars['String'];
 };
 
+export type Document = {
+  __typename?: 'Document';
+  fileName: Scalars['String'];
+  id: Scalars['ID'];
+  name: Scalars['String'];
+  projectId: Scalars['String'];
+};
+
+export type DocumentInput = {
+  name: Scalars['String'];
+  projectId: Scalars['String'];
+};
+
+export type File = {
+  __typename?: 'File';
+  encoding: Scalars['String'];
+  filename: Scalars['String'];
+  mimetype: Scalars['String'];
+};
+
 export type LoginResponse = {
   __typename?: 'LoginResponse';
   token?: Maybe<Scalars['String']>;
@@ -44,18 +65,27 @@ export type LoginUserInput = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  addDocument: Document;
   createComment: Comment;
   createProject: Project;
   createTask: Task;
   deleteComment: Scalars['Boolean'];
+  deleteDocument: Document;
   deleteProject?: Maybe<Scalars['Boolean']>;
   deleteTask?: Maybe<Scalars['Boolean']>;
   deleteUser?: Maybe<Scalars['Boolean']>;
   login: LoginResponse;
   register: User;
+  updateDocument: Document;
   updateProject: Project;
   updateTask: Task;
   updateUser: User;
+};
+
+
+export type MutationAddDocumentArgs = {
+  DocumentInput: DocumentInput;
+  file: Scalars['Upload'];
 };
 
 
@@ -76,6 +106,11 @@ export type MutationCreateTaskArgs = {
 
 export type MutationDeleteCommentArgs = {
   commentId: Scalars['String'];
+};
+
+
+export type MutationDeleteDocumentArgs = {
+  docId: Scalars['String'];
 };
 
 
@@ -101,6 +136,12 @@ export type MutationLoginArgs = {
 
 export type MutationRegisterArgs = {
   userInput: UserInput;
+};
+
+
+export type MutationUpdateDocumentArgs = {
+  docId: Scalars['String'];
+  newName: Scalars['String'];
 };
 
 
@@ -143,18 +184,30 @@ export type ProjectInput = {
 
 export type Query = {
   __typename?: 'Query';
+  getAllDocumentsByProject?: Maybe<Array<Maybe<Document>>>;
   getAllProjects: Array<Project>;
   getAllTasks: Array<Task>;
   getAllUsers: Array<User>;
   getCommentsByTask: Array<Comment>;
+  getDocumentById?: Maybe<Document>;
   getProject: Project;
   getTask: Task;
   getUser: User;
 };
 
 
+export type QueryGetAllDocumentsByProjectArgs = {
+  projectId: Scalars['String'];
+};
+
+
 export type QueryGetCommentsByTaskArgs = {
   taskId: Scalars['String'];
+};
+
+
+export type QueryGetDocumentByIdArgs = {
+  docId: Scalars['String'];
 };
 
 
@@ -242,6 +295,13 @@ export type UserInput = {
   password: Scalars['String'];
 };
 
+export type CreateProjectMutationVariables = Exact<{
+  projectInput: ProjectInput;
+}>;
+
+
+export type CreateProjectMutation = { __typename?: 'Mutation', createProject: { __typename?: 'Project', id: string, name: string, client: string, description: string } };
+
 export type GetAllUsersQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -286,6 +346,42 @@ export type GetCommentsTaskQueryVariables = Exact<{
 export type GetCommentsTaskQuery = { __typename?: 'Query', getCommentsByTask: Array<{ __typename?: 'Comment', id: string, content: string, userId: string, createdAt: any, taskId: string }> };
 
 
+export const CreateProjectDocument = gql`
+    mutation createProject($projectInput: ProjectInput!) {
+  createProject(projectInput: $projectInput) {
+    id
+    name
+    client
+    description
+  }
+}
+    `;
+export type CreateProjectMutationFn = Apollo.MutationFunction<CreateProjectMutation, CreateProjectMutationVariables>;
+
+/**
+ * __useCreateProjectMutation__
+ *
+ * To run a mutation, you first call `useCreateProjectMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateProjectMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createProjectMutation, { data, loading, error }] = useCreateProjectMutation({
+ *   variables: {
+ *      projectInput: // value for 'projectInput'
+ *   },
+ * });
+ */
+export function useCreateProjectMutation(baseOptions?: Apollo.MutationHookOptions<CreateProjectMutation, CreateProjectMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateProjectMutation, CreateProjectMutationVariables>(CreateProjectDocument, options);
+      }
+export type CreateProjectMutationHookResult = ReturnType<typeof useCreateProjectMutation>;
+export type CreateProjectMutationResult = Apollo.MutationResult<CreateProjectMutation>;
+export type CreateProjectMutationOptions = Apollo.BaseMutationOptions<CreateProjectMutation, CreateProjectMutationVariables>;
 export const GetAllUsersDocument = gql`
     query getAllUsers {
   getAllUsers {
