@@ -1,16 +1,14 @@
-import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client';
-import { StatusBar } from 'expo-status-bar';
-import { AppRegistry, StyleSheet, Text, View } from 'react-native';
+import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
+import { StatusBar } from "expo-status-bar";
+import { AppRegistry, StyleSheet, Text, View } from "react-native";
 
 // Initialize Apollo Client
 const client = new ApolloClient({
-  uri: 'localhost:4000/graphql',
-  cache: new InMemoryCache()
+  uri: "localhost:4000/graphql",
+  cache: new InMemoryCache(),
 });
 
-
 export default function App() {
-
   return (
     <ApolloProvider client={client}>
       <View style={styles.container}>
@@ -24,10 +22,10 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: "#fff",
+    alignItems: "center",
+    justifyContent: "center",
   },
 });
 
-AppRegistry.registerComponent('Paprika-mobile', () => App);
+AppRegistry.registerComponent("Paprika", () => App);
