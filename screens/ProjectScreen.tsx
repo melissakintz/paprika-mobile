@@ -23,18 +23,21 @@ export default function ProjectScreen() {
     loading,
     fetchMore,
   } = useGetAllProjectsQuery();
+  const [createModalVisible, setCreateModalVisible] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
-  const [projectName, setProjectName] = useState("");
-  const [projectClient, setProjectClient] = useState("");
-  const [projectDescription, setProjectDescription] = useState("");
-  const [createProject] = useCreateProjectMutation();
 
   return (
     <View style={styles.safeContainer}>
       <FlatList
         contentContainerStyle={styles.container}
         data={projects?.getAllProjects}
-        renderItem={(project) => <ProjectCard project={project.item} />}
+        renderItem={(project) => (
+          <ProjectCard
+            project={project.item}
+            setModalVisible={setModalVisible}
+            modalVisible={modalVisible}
+          />
+        )}
         ListEmptyComponent={() => <Text>pas de projets en cours</Text>}
         onRefresh={refetch}
         refreshing={loading}
@@ -43,84 +46,171 @@ export default function ProjectScreen() {
       />
       <TouchableOpacity
         style={styles.add}
-        onPress={() => setModalVisible(true)}
+        onPress={() => setCreateModalVisible(true)}
       >
         <Ionicons name="add-circle-outline" size={40} color="#E33636" />
       </TouchableOpacity>
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => {
-          setModalVisible(!modalVisible);
-        }}
-      >
-        <View style={styles.centeredView}>
-          <View style={styles.modalView}>
-            <Pressable
-              style={styles.close}
-              onPress={() => setModalVisible(false)}
-            >
-              <Ionicons name="close-circle-outline" size={24} color="red" />
-            </Pressable>
-
-            <Text style={styles.title}>Ajouter un project</Text>
-            <TextInput
-              placeholder="nom du projet"
-              value={projectName}
-              style={styles.input}
-              onChangeText={(value) => setProjectName(value)}
-            />
-            <TextInput
-              placeholder="Client"
-              value={projectClient}
-              style={styles.input}
-              onChangeText={(value) => setProjectClient(value)}
-            />
-            <TextInput
-              placeholder="description"
-              value={projectDescription}
-              style={styles.input}
-              onChangeText={(value) => setProjectDescription(value)}
-            />
-            <Pressable
-              style={[styles.button, styles.buttonClose]}
-              onPress={() => {
-                createProject({
-                  variables: {
-                    projectInput: {
-                      name: projectName,
-                      client: projectClient,
-                      description: projectDescription,
-                    },
-                  },
-                });
-                setModalVisible(false);
-                refetch();
-              }}
-            >
-              <Text style={styles.textStyle}>Ajouter</Text>
-            </Pressable>
-          </View>
-        </View>
-      </Modal>
+      <CreateModal
+        refetch={refetch}
+        setCreateModalVisible={setCreateModalVisible}
+        createModalVisible={createModalVisible}
+      />
     </View>
   );
 }
 
-const ProjectCard = ({ project }: { project: Project }): JSX.Element => {
+const CreateModal = ({
+  refetch,
+  setCreateModalVisible,
+  createModalVisible,
+}: {
+  setCreateModalVisible: (show: boolean) => void;
+  createModalVisible: boolean;
+  refetch: () => Promise<any>;
+}): JSX.Element => {
+  const [projectName, setProjectName] = useState("");
+  const [projectClient, setProjectClient] = useState("");
+  const [projectDescription, setProjectDescription] = useState("");
+  const [createProject] = useCreateProjectMutation();
+
   return (
-    <View style={styles.card}>
-      <View
-        style={[
-          styles.header,
-          { backgroundColor: project.endAt ? "green" : "orange" },
-        ]}
+    <Modal
+      animationType="slide"
+      transparent={true}
+      visible={createModalVisible}
+      onRequestClose={() => {
+        setCreateModalVisible(!createModalVisible);
+      }}
+    >
+      <View style={styles.centeredView}>
+        <View style={styles.modalView}>
+          <Pressable
+            style={styles.close}
+            onPress={() => setCreateModalVisible(false)}
+          >
+            <Ionicons name="close-circle-outline" size={24} color="red" />
+          </Pressable>
+
+          <Text style={styles.title}>Ajouter un project</Text>
+          <TextInput
+            placeholder="nom du projet"
+            value={projectName}
+            style={styles.input}
+            onChangeText={(value) => setProjectName(value)}
+          />
+          <TextInput
+            placeholder="Client"
+            value={projectClient}
+            style={styles.input}
+            onChangeText={(value) => setProjectClient(value)}
+          />
+          <TextInput
+            placeholder="description"
+            value={projectDescription}
+            style={styles.input}
+            onChangeText={(value) => setProjectDescription(value)}
+          />
+          <Pressable
+            style={[styles.button, styles.buttonClose]}
+            onPress={() => {
+              createProject({
+                variables: {
+                  projectInput: {
+                    name: projectName,
+                    client: projectClient,
+                    description: projectDescription,
+                  },
+                },
+              });
+              setCreateModalVisible(false);
+              refetch();
+            }}
+          >
+            <Text style={styles.textStyle}>Ajouter</Text>
+          </Pressable>
+        </View>
+      </View>
+    </Modal>
+  );
+};
+
+const ProjectCard = ({
+  project,
+  setModalVisible,
+  modalVisible,
+}: {
+  project: Project;
+  setModalVisible: (show: boolean) => void;
+  modalVisible: boolean;
+}): JSX.Element => {
+  return (
+    <>
+      <TouchableOpacity
+        style={styles.card}
+        onPress={() => setModalVisible(true)}
+      >
+        <View style={styles.header} />
+        <View style={styles.badge}>
+          <Text
+            style={[
+              styles.textBadge,
+              { color: project.endAt ? "green" : "blue" },
+            ]}
+          >
+            {project.endAt ? "CLOSED" : "OPEN"}
+          </Text>
+        </View>
+        <Text style={styles.title}>{project.name}</Text>
+        <Text style={styles.description}>{project.description}</Text>
+        <Text style={styles.client}>
+          <Ionicons name="person" /> {project.client}
+        </Text>
+      </TouchableOpacity>
+      <ProjectModal
+        project={project}
+        setModalVisible={setModalVisible}
+        modalVisible={modalVisible}
       />
-      <Text style={styles.title}>{project.name}</Text>
-      <Text style={styles.description}>{project.description}</Text>
-      <Text style={styles.client}>{project.client}</Text>
-    </View>
+    </>
+  );
+};
+
+const ProjectModal = ({
+  project,
+  modalVisible,
+  setModalVisible,
+}: {
+  project: Project;
+  modalVisible: boolean;
+  setModalVisible: (show: boolean) => void;
+}): JSX.Element => {
+  const start = new Date(project.startAt);
+  let end;
+  if (project.endAt) end = new Date(project.endAt);
+
+  return (
+    <Modal
+      animationType="slide"
+      transparent={true}
+      visible={modalVisible}
+      onRequestClose={() => {
+        setModalVisible(!modalVisible);
+      }}
+    >
+      <View style={styles.centeredView}>
+        <View style={styles.modalView}>
+          <Pressable
+            style={styles.close}
+            onPress={() => setModalVisible(false)}
+          >
+            <Ionicons name="close-circle-outline" size={24} color="red" />
+          </Pressable>
+
+          <Text>Date de début: {start.toDateString()}</Text>
+          <Text>Date de fin: {end ? end.toDateString() : "indéfinie"}</Text>
+        </View>
+      </View>
+    </Modal>
   );
 };
 
@@ -129,7 +219,9 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     textAlign: "center",
   },
-  description: {},
+  description: {
+    marginVertical: 10,
+  },
   client: {
     color: "gray",
     textTransform: "uppercase",
@@ -147,6 +239,7 @@ const styles = StyleSheet.create({
   header: {
     height: 2,
     marginBottom: 8,
+    backgroundColor: "orange",
   },
   add: {
     alignItems: "center",
@@ -205,5 +298,14 @@ const styles = StyleSheet.create({
   close: {
     margin: -10,
     alignSelf: "flex-end",
+  },
+  badge: {
+    padding: 4,
+    borderRadius: 5,
+    backgroundColor: "lightgray",
+    alignSelf: "flex-end",
+  },
+  textBadge: {
+    fontSize: 10,
   },
 });
