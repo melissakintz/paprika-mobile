@@ -8,7 +8,7 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  View,
+  View
 } from "react-native";
 import { Swipeable } from "react-native-gesture-handler";
 import { NavigationStackScreenProps } from "react-navigation-stack";
@@ -17,6 +17,7 @@ import {
   useCreateProjectMutation,
   useGetAllProjectsQuery,
   useUpdateProjectMutation,
+
 } from "../../graphql/graphql";
 
 export default function ProjectScreen({

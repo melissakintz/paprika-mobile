@@ -3,9 +3,8 @@ import { FlatList, View, Text, StyleSheet, TouchableOpacity } from "react-native
 import { useGetAllTasksQuery } from "../../graphql/graphql";
 import Ionicons from "@expo/vector-icons/Ionicons";
 
-export default function TaskScreen({ navigation }) {
+export default function TaskScreen({ navigation }: any) {
   const { data: tasks } = useGetAllTasksQuery();
-  console.log(tasks?.getAllTasks);
 
   const iconName = (item: any) => {
     if (item.status) {
