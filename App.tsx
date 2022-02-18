@@ -1,25 +1,24 @@
-import React, { useEffect, useState, Fragment } from 'react';
-import { AppRegistry, StyleSheet, Text, TextProps, View } from "react-native";
-import store from './store'
-import { Provider, RootStateOrAny } from 'react-redux'
-import { useSelector } from 'react-redux'
-import { NavigationContainer } from "@react-navigation/native";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import {
   ApolloClient,
   ApolloProvider,
   HttpLink,
   InMemoryCache,
 } from "@apollo/client";
-import { createStackNavigator } from "@react-navigation/stack";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { NavigationContainer } from "@react-navigation/native";
+import { createStackNavigator } from "@react-navigation/stack";
+import React from "react";
+import { AppRegistry } from "react-native";
+import { Provider, RootStateOrAny, useSelector } from "react-redux";
 import HomeScreen from "./screens/HomeScreen";
 import LoginScreen from "./screens/LoginScreen";
 import ProjectDetails from "./screens/projectScreens/ProjectDetails";
 import ProjectScreen from "./screens/projectScreens/ProjectScreen";
 import TaskScreen from "./screens/TaskScreen";
+import store from "./store";
 
-const link = new HttpLink({ uri: "http://192.168.1.88:4000/graphql" });
+const link = new HttpLink({ uri: "http://192.168.1.21:4000/graphql" });
 
 // Initialize Apollo Client
 const client = new ApolloClient({
@@ -33,6 +32,7 @@ const Tab = createBottomTabNavigator();
 const TabNavigator = () => {
   return (
     <Tab.Navigator
+      initialRouteName="Accueil"
       screenOptions={({ route }) => ({
         tabBarIcon: ({ focused, color, size }) => {
           let iconName: any;
@@ -51,7 +51,6 @@ const TabNavigator = () => {
         },
 
         tabBarActiveTintColor: "#E33636",
-
         tabBarInactiveTintColor: "gray",
         headerShown: false,
       })}
@@ -81,6 +80,7 @@ const ProjectStack = () => {
     </Stack.Navigator>
   );
 };
+
 const TaskStack = () => {
   return (
     <Stack.Navigator>
@@ -114,7 +114,7 @@ function App() {
 
   return (
     <ApolloProvider client={client}>
-      {isLogged ?
+      {isLogged ? (
         <NavigationContainer>
           <Stack.Navigator screenOptions={{ headerShown: false }}>
             <Stack.Group>
@@ -122,8 +122,9 @@ function App() {
             </Stack.Group>
           </Stack.Navigator>
         </NavigationContainer>
-      :
-      <LoginScreen />}
+      ) : (
+        <LoginScreen />
+      )}
     </ApolloProvider>
   );
 }
@@ -133,7 +134,7 @@ export default function AppWrapper() {
     <Provider store={store}>
       <App />
     </Provider>
-  )
+  );
 }
 
 AppRegistry.registerComponent("Paprika", () => AppWrapper);
