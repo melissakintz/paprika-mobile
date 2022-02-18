@@ -1,7 +1,13 @@
-import { Text } from "react-native";
+import { Text, View } from "react-native";
 
-export default function OneTaskScreen() {
-    return(
-        <Text>Tâche détails</Text>
-    )
+export default function OneTaskScreen({ route }) {
+  const { task } = route.params;
+
+  return (
+    <View>
+      <Text>Titre: {task.name}</Text>
+      <Text>Description: {task.description}</Text>
+      <Text>Status: {task.status ? task.status : ""}</Text>
+    </View>
+  );
 }

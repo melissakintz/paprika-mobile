@@ -1,9 +1,9 @@
 import React from "react";
-import { FlatList, View, Text, StyleSheet } from "react-native";
+import { FlatList, View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { useGetAllTasksQuery } from "../../graphql/graphql";
 import Ionicons from "@expo/vector-icons/Ionicons";
 
-export default function TaskScreen() {
+export default function TaskScreen({ navigation }) {
   const { data: tasks } = useGetAllTasksQuery();
   console.log(tasks?.getAllTasks);
 
@@ -31,13 +31,14 @@ export default function TaskScreen() {
       <FlatList
         data={tasks?.getAllTasks}
         renderItem={({ item }) => (
-          <View
+          <TouchableOpacity
             style={[
               styles.card,
               item.status === "DONE" && styles.done,
               item.status === "INPROGRESS" && styles.inprogress,
               item.status === "OPEN" && styles.open,
             ]}
+            onPress={()=> navigation.navigate('OneTaskScreen', {task: item})}
           >
             <View style={styles.firstRow}>
               <Ionicons
@@ -51,7 +52,7 @@ export default function TaskScreen() {
             <Text style={styles.description}>
               {firstUpperCase(item.description)}
             </Text>
-          </View>
+          </TouchableOpacity>
         )}
       ></FlatList>
     </View>
@@ -82,15 +83,15 @@ const styles = StyleSheet.create({
     backgroundColor: "#d8e2dc",
     borderLeftColor: "#7EA08B",
   },
-  firstRow:{
+  firstRow: {
     flexDirection: "row",
-    alignItems: "center"
+    alignItems: "center",
   },
   text: {
     color: "black",
     fontWeight: "bold",
     fontSize: 24,
-    marginLeft: 8
+    marginLeft: 8,
   },
   description: {
     paddingTop: 16,
