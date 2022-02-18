@@ -223,7 +223,10 @@ const ProjectCard = ({
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   return (
     <>
-      <Swipeable renderRightActions={RightAction}>
+      <Swipeable
+        renderRightActions={RightAction}
+        onSwipeableRightOpen={() => console.log("will delete")}
+      >
         <Pressable
           onLongPress={() => setShowUpdateModal(true)}
           style={styles.card}
@@ -261,17 +264,20 @@ const ProjectCard = ({
 const RightAction = () => {
   return (
     <TouchableOpacity style={styles.update}>
-      <Ionicons name="pencil" size={30} color="white" />
+      <Ionicons name="trash" size={30} color="red" />
     </TouchableOpacity>
   );
 };
 
 const styles = StyleSheet.create({
   update: {
-    padding: 19,
-    backgroundColor: "orange",
+    flex: 1,
+    backgroundColor: "lightgray",
+    borderRadius: 25,
     justifyContent: "center",
     margin: 5,
+    padding: 13,
+    alignItems: "flex-end",
   },
   title: {
     fontWeight: "bold",
