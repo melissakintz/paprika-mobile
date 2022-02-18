@@ -18,7 +18,7 @@ import ProjectScreen from "./screens/projectScreens/ProjectScreen";
 import TaskScreen from "./screens/TaskScreen";
 import store from "./store";
 
-const link = new HttpLink({ uri: "http://192.168.1.21:4000/graphql" });
+const link = new HttpLink({ uri: "http://192.168.1.88:4000/graphql" });
 
 // Initialize Apollo Client
 const client = new ApolloClient({
