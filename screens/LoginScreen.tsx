@@ -79,6 +79,7 @@ const styles = StyleSheet.create({
     alignItems: "flex-start",
   },
   TextInput: {
+    width: "100%",
     height: 50,
     flex: 1,
     padding: 10,
