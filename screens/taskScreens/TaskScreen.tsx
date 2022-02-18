@@ -9,9 +9,8 @@ import {
 } from "react-native";
 import { useGetAllTasksQuery } from "../../graphql/graphql";
 
-export default function TaskScreen({ navigation }) {
+export default function TaskScreen({ navigation }: any) {
   const { data: tasks } = useGetAllTasksQuery();
-  console.log(tasks?.getAllTasks);
 
   const iconName = (item: any) => {
     if (item.status) {
