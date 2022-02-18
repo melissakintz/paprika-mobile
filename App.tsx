@@ -2,7 +2,7 @@ import {
   ApolloClient,
   ApolloProvider,
   HttpLink,
-  InMemoryCache,
+  InMemoryCache
 } from "@apollo/client";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";

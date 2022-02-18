@@ -1,7 +1,7 @@
 import React from "react";
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { useDispatch } from 'react-redux'
-import { loggedOut } from '../Redux/login'
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { useDispatch } from 'react-redux';
+import { loggedOut } from '../Redux/login';
 
 export default function HomeScreen() {
     const dispatch = useDispatch();
