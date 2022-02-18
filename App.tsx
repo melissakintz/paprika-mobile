@@ -20,7 +20,7 @@ import ProjectScreen from "./screens/projectScreens/ProjectScreen";
 import OneTaskScreen from "./screens/taskScreens/OneTaskScreen";
 import TaskScreen from "./screens/taskScreens/TaskScreen";
 
-const link = new HttpLink({ uri: "http://192.168.1.20:4000" });
+const link = new HttpLink({ uri: "http://192.168.122.1:4000" });
 
 // Initialize Apollo Client
 const client = new ApolloClient({
