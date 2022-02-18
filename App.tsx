@@ -1,13 +1,3 @@
-<<<<<<< HEAD
-import React from "react";
-import { AppRegistry } from "react-native";
-import store from "./store";
-import { Provider, RootStateOrAny } from "react-redux";
-import { useSelector } from "react-redux";
-import { NavigationContainer } from "@react-navigation/native";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-=======
->>>>>>> c75c121d04a3111b41a6196c9778595a171111b6
 import {
   ApolloClient,
   ApolloProvider,
