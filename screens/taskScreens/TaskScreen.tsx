@@ -1,7 +1,13 @@
-import React from "react";
-import { FlatList, View, Text, StyleSheet, TouchableOpacity } from "react-native";
-import { useGetAllTasksQuery } from "../../graphql/graphql";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import React from "react";
+import {
+  FlatList,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { useGetAllTasksQuery } from "../../graphql/graphql";
 
 export default function TaskScreen({ navigation }) {
   const { data: tasks } = useGetAllTasksQuery();
@@ -38,7 +44,7 @@ export default function TaskScreen({ navigation }) {
               item.status === "INPROGRESS" && styles.inprogress,
               item.status === "OPEN" && styles.open,
             ]}
-            onPress={()=> navigation.navigate('OneTaskScreen', {task: item})}
+            onPress={() => navigation.navigate("OneTaskScreen", { task: item })}
           >
             <View style={styles.firstRow}>
               <Ionicons
