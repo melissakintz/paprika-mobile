@@ -8,13 +8,13 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  View,
+  View
 } from "react-native";
 import { NavigationStackScreenProps } from "react-navigation-stack";
 import {
   Project,
   useCreateProjectMutation,
-  useGetAllProjectsQuery,
+  useGetAllProjectsQuery
 } from "../../graphql/graphql";
 
 export default function ProjectScreen({
