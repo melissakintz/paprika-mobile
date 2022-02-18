@@ -1,11 +1,20 @@
-import React from "react";
+import React, { useState } from "react";
 import { ScrollView, Text, View, Image, StyleSheet } from 'react-native';
 import Ionicons from "@expo/vector-icons/Ionicons";
 import {Calendar, CalendarList, Agenda} from 'react-native-calendars';
 import img from "../assets/paprika1.png";
 import { Appbar } from 'react-native-paper';
+import { useGetAllProjectsLazyQuery, useGetAllProjectsQuery } from "../graphql/graphql";
+import { useGetAllTasksLazyQuery, useGetAllTasksQuery } from "../graphql/graphql";
 
-export default function HomeScreen(){
+export default function HomeScreen() {
+    
+    // const [project, setProject] = useState('');
+    // const [task, setTask] = useState('');
+
+    const { data: project, error } = useGetAllProjectsQuery();
+    console.log(project?.getAllProjects[0].description)
+
     return (
         <ScrollView>
             <Appbar.Header>
