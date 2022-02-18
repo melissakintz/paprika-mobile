@@ -8,7 +8,7 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  View
+  View,
 } from "react-native";
 import { Swipeable } from "react-native-gesture-handler";
 import { NavigationStackScreenProps } from "react-navigation-stack";
@@ -17,7 +17,6 @@ import {
   useCreateProjectMutation,
   useGetAllProjectsQuery,
   useUpdateProjectMutation,
-
 } from "../../graphql/graphql";
 
 export default function ProjectScreen({
@@ -146,9 +145,11 @@ const UpdateModal = ({
   setShowUpdateModal: (show: boolean) => void;
   showUpdateModal: boolean;
 }): JSX.Element => {
-  const [projectName, setProjectName] = useState("");
-  const [projectClient, setProjectClient] = useState("");
-  const [projectDescription, setProjectDescription] = useState("");
+  const [projectName, setProjectName] = useState(project.name);
+  const [projectClient, setProjectClient] = useState(project.client);
+  const [projectDescription, setProjectDescription] = useState(
+    project.description
+  );
   const [updateProject] = useUpdateProjectMutation();
 
   return (
@@ -185,7 +186,7 @@ const UpdateModal = ({
           <TextInput
             placeholder="description"
             value={projectDescription}
-            style={styles.input}
+            style={[styles.input]}
             onChangeText={(value) => setProjectDescription(value)}
           />
           <Pressable
@@ -195,17 +196,16 @@ const UpdateModal = ({
                 variables: {
                   projectId: project.id,
                   updateProjectInput: {
-                    name: "",
-                    description: "",
-                    startAt: "",
-                    endAt: "",
+                    name: projectName,
+                    description: projectDescription,
+                    client: projectClient,
                   },
                 },
               });
               setShowUpdateModal(false);
             }}
           >
-            <Text style={styles.textStyle}>Ajouter</Text>
+            <Text style={styles.textStyle}>Modifier</Text>
           </Pressable>
         </View>
       </View>
@@ -223,7 +223,10 @@ const ProjectCard = ({
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   return (
     <>
-      <Swipeable renderRightActions={RightAction}>
+      <Swipeable
+        renderRightActions={RightAction}
+        onSwipeableRightOpen={() => console.log("will delete")}
+      >
         <Pressable
           onLongPress={() => setShowUpdateModal(true)}
           style={styles.card}
@@ -261,17 +264,20 @@ const ProjectCard = ({
 const RightAction = () => {
   return (
     <TouchableOpacity style={styles.update}>
-      <Ionicons name="pencil" size={30} color="white" />
+      <Ionicons name="trash" size={30} color="red" />
     </TouchableOpacity>
   );
 };
 
 const styles = StyleSheet.create({
   update: {
-    padding: 19,
-    backgroundColor: "orange",
+    flex: 1,
+    backgroundColor: "lightgray",
+    borderRadius: 25,
     justifyContent: "center",
     margin: 5,
+    padding: 13,
+    alignItems: "flex-end",
   },
   title: {
     fontWeight: "bold",
