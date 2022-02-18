@@ -1,6 +1,6 @@
 import React from "react";
 import { FlatList, View, Text, StyleSheet } from "react-native";
-import { useGetAllTasksQuery } from "../graphql/graphql";
+import { useGetAllTasksQuery } from "../../graphql/graphql";
 import Ionicons from "@expo/vector-icons/Ionicons";
 
 export default function TaskScreen() {
