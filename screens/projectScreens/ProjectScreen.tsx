@@ -10,11 +10,13 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { Swipeable } from "react-native-gesture-handler";
 import { NavigationStackScreenProps } from "react-navigation-stack";
 import {
   Project,
   useCreateProjectMutation,
   useGetAllProjectsQuery,
+  useUpdateProjectMutation,
 } from "../../graphql/graphql";
 
 export default function ProjectScreen({
@@ -134,6 +136,82 @@ const CreateModal = ({
   );
 };
 
+const UpdateModal = ({
+  project,
+  setShowUpdateModal,
+  showUpdateModal,
+}: {
+  project: Project;
+  setShowUpdateModal: (show: boolean) => void;
+  showUpdateModal: boolean;
+}): JSX.Element => {
+  const [projectName, setProjectName] = useState("");
+  const [projectClient, setProjectClient] = useState("");
+  const [projectDescription, setProjectDescription] = useState("");
+  const [updateProject] = useUpdateProjectMutation();
+
+  return (
+    <Modal
+      animationType="slide"
+      transparent={true}
+      visible={showUpdateModal}
+      onRequestClose={() => {
+        setShowUpdateModal(!showUpdateModal);
+      }}
+    >
+      <View style={styles.centeredView}>
+        <View style={styles.modalView}>
+          <Pressable
+            style={styles.close}
+            onPress={() => setShowUpdateModal(false)}
+          >
+            <Ionicons name="close-circle-outline" size={24} color="red" />
+          </Pressable>
+
+          <Text style={styles.title}>Modifier le project</Text>
+          <TextInput
+            placeholder="nom du projet"
+            value={projectName}
+            style={styles.input}
+            onChangeText={(value) => setProjectName(value)}
+          />
+          <TextInput
+            placeholder="Client"
+            value={projectClient}
+            style={styles.input}
+            onChangeText={(value) => setProjectClient(value)}
+          />
+          <TextInput
+            placeholder="description"
+            value={projectDescription}
+            style={styles.input}
+            onChangeText={(value) => setProjectDescription(value)}
+          />
+          <Pressable
+            style={[styles.button, styles.buttonClose]}
+            onPress={() => {
+              updateProject({
+                variables: {
+                  projectId: project.id,
+                  updateProjectInput: {
+                    name: "",
+                    description: "",
+                    startAt: "",
+                    endAt: "",
+                  },
+                },
+              });
+              setShowUpdateModal(false);
+            }}
+          >
+            <Text style={styles.textStyle}>Ajouter</Text>
+          </Pressable>
+        </View>
+      </View>
+    </Modal>
+  );
+};
+
 const ProjectCard = ({
   project,
   navigation,
@@ -141,36 +219,59 @@ const ProjectCard = ({
   project: Project;
   navigation: NavigationStackScreenProps;
 }): JSX.Element => {
+  const [showUpdateModal, setShowUpdateModal] = useState(false);
   return (
     <>
-      <TouchableOpacity
-        style={styles.card}
-        onPress={() =>
-          navigation.navigate("ProjetDetails", { project: project })
-        }
-      >
-        <View style={styles.header} />
-        <View style={styles.badge}>
-          <Text
-            style={[
-              styles.textBadge,
-              { color: project.endAt ? "green" : "blue" },
-            ]}
-          >
-            {project.endAt ? "CLOSED" : "OPEN"}
+      <Swipeable renderRightActions={RightAction}>
+        <Pressable
+          onLongPress={() => setShowUpdateModal(true)}
+          style={styles.card}
+          onPress={() =>
+            navigation.navigate("ProjetDetails", { project: project })
+          }
+        >
+          <View style={styles.header} />
+          <View style={styles.badge}>
+            <Text
+              style={[
+                styles.textBadge,
+                { color: project.endAt ? "green" : "blue" },
+              ]}
+            >
+              {project.endAt ? "CLOSED" : "OPEN"}
+            </Text>
+          </View>
+          <Text style={styles.title}>{project.name}</Text>
+          <Text style={styles.description}>{project.description}</Text>
+          <Text style={styles.client}>
+            <Ionicons name="person" /> {project.client}
           </Text>
-        </View>
-        <Text style={styles.title}>{project.name}</Text>
-        <Text style={styles.description}>{project.description}</Text>
-        <Text style={styles.client}>
-          <Ionicons name="person" /> {project.client}
-        </Text>
-      </TouchableOpacity>
+        </Pressable>
+      </Swipeable>
+      <UpdateModal
+        project={project}
+        setShowUpdateModal={setShowUpdateModal}
+        showUpdateModal={showUpdateModal}
+      />
     </>
   );
 };
 
+const RightAction = () => {
+  return (
+    <TouchableOpacity style={styles.update}>
+      <Ionicons name="pencil" size={30} color="white" />
+    </TouchableOpacity>
+  );
+};
+
 const styles = StyleSheet.create({
+  update: {
+    padding: 19,
+    backgroundColor: "orange",
+    justifyContent: "center",
+    margin: 5,
+  },
   title: {
     fontWeight: "bold",
     textAlign: "center",
@@ -191,6 +292,7 @@ const styles = StyleSheet.create({
   container: {
     margin: 5,
     alignSelf: "center",
+    width: "100%",
   },
   header: {
     height: 2,
