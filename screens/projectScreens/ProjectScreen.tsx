@@ -8,7 +8,7 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  View
+  View,
 } from "react-native";
 import { Swipeable } from "react-native-gesture-handler";
 import { NavigationStackScreenProps } from "react-navigation-stack";
@@ -17,7 +17,6 @@ import {
   useCreateProjectMutation,
   useGetAllProjectsQuery,
   useUpdateProjectMutation,
-
 } from "../../graphql/graphql";
 
 export default function ProjectScreen({
@@ -146,9 +145,11 @@ const UpdateModal = ({
   setShowUpdateModal: (show: boolean) => void;
   showUpdateModal: boolean;
 }): JSX.Element => {
-  const [projectName, setProjectName] = useState("");
-  const [projectClient, setProjectClient] = useState("");
-  const [projectDescription, setProjectDescription] = useState("");
+  const [projectName, setProjectName] = useState(project.name);
+  const [projectClient, setProjectClient] = useState(project.client);
+  const [projectDescription, setProjectDescription] = useState(
+    project.description
+  );
   const [updateProject] = useUpdateProjectMutation();
 
   return (
@@ -185,7 +186,7 @@ const UpdateModal = ({
           <TextInput
             placeholder="description"
             value={projectDescription}
-            style={styles.input}
+            style={[styles.input]}
             onChangeText={(value) => setProjectDescription(value)}
           />
           <Pressable
@@ -195,17 +196,16 @@ const UpdateModal = ({
                 variables: {
                   projectId: project.id,
                   updateProjectInput: {
-                    name: "",
-                    description: "",
-                    startAt: "",
-                    endAt: "",
+                    name: projectName,
+                    description: projectDescription,
+                    client: projectClient,
                   },
                 },
               });
               setShowUpdateModal(false);
             }}
           >
-            <Text style={styles.textStyle}>Ajouter</Text>
+            <Text style={styles.textStyle}>Modifier</Text>
           </Pressable>
         </View>
       </View>
