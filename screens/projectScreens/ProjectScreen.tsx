@@ -10,13 +10,18 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { NavigationStackScreenProps } from "react-navigation-stack";
 import {
   Project,
   useCreateProjectMutation,
   useGetAllProjectsQuery,
-} from "../graphql/graphql";
+} from "../../graphql/graphql";
 
-export default function ProjectScreen() {
+export default function ProjectScreen({
+  navigation,
+}: {
+  navigation: NavigationStackScreenProps;
+}) {
   const {
     data: projects,
     refetch,
@@ -24,7 +29,6 @@ export default function ProjectScreen() {
     fetchMore,
   } = useGetAllProjectsQuery();
   const [createModalVisible, setCreateModalVisible] = useState(false);
-  const [modalVisible, setModalVisible] = useState(false);
 
   return (
     <View style={styles.safeContainer}>
@@ -32,11 +36,7 @@ export default function ProjectScreen() {
         contentContainerStyle={styles.container}
         data={projects?.getAllProjects}
         renderItem={(project) => (
-          <ProjectCard
-            project={project.item}
-            setModalVisible={setModalVisible}
-            modalVisible={modalVisible}
-          />
+          <ProjectCard project={project.item} navigation={navigation} />
         )}
         ListEmptyComponent={() => <Text>pas de projets en cours</Text>}
         onRefresh={refetch}
@@ -136,18 +136,18 @@ const CreateModal = ({
 
 const ProjectCard = ({
   project,
-  setModalVisible,
-  modalVisible,
+  navigation,
 }: {
   project: Project;
-  setModalVisible: (show: boolean) => void;
-  modalVisible: boolean;
+  navigation: NavigationStackScreenProps;
 }): JSX.Element => {
   return (
     <>
       <TouchableOpacity
         style={styles.card}
-        onPress={() => setModalVisible(true)}
+        onPress={() =>
+          navigation.navigate("ProjetDetails", { project: project })
+        }
       >
         <View style={styles.header} />
         <View style={styles.badge}>
@@ -166,51 +166,7 @@ const ProjectCard = ({
           <Ionicons name="person" /> {project.client}
         </Text>
       </TouchableOpacity>
-      <ProjectModal
-        project={project}
-        setModalVisible={setModalVisible}
-        modalVisible={modalVisible}
-      />
     </>
-  );
-};
-
-const ProjectModal = ({
-  project,
-  modalVisible,
-  setModalVisible,
-}: {
-  project: Project;
-  modalVisible: boolean;
-  setModalVisible: (show: boolean) => void;
-}): JSX.Element => {
-  const start = new Date(project.startAt);
-  let end;
-  if (project.endAt) end = new Date(project.endAt);
-
-  return (
-    <Modal
-      animationType="slide"
-      transparent={true}
-      visible={modalVisible}
-      onRequestClose={() => {
-        setModalVisible(!modalVisible);
-      }}
-    >
-      <View style={styles.centeredView}>
-        <View style={styles.modalView}>
-          <Pressable
-            style={styles.close}
-            onPress={() => setModalVisible(false)}
-          >
-            <Ionicons name="close-circle-outline" size={24} color="red" />
-          </Pressable>
-
-          <Text>Date de début: {start.toDateString()}</Text>
-          <Text>Date de fin: {end ? end.toDateString() : "indéfinie"}</Text>
-        </View>
-      </View>
-    </Modal>
   );
 };
 
