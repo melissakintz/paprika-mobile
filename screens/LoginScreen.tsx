@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { useDispatch } from 'react-redux';
-import { useGetAllUsersQuery } from '../graphql/graphql';
+import { useLoginMutation } from '../graphql/graphql';
 import { loggedIn } from '../Redux/login';
+import { setUser } from '../Redux/user';
 
 export default function LoginScreen() {
   const dispatch = useDispatch()
@@ -10,17 +11,14 @@ export default function LoginScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const { data: user } = useGetAllUsersQuery();
-  const allUsers = user?.getAllUsers;
-  function login() {
-    if (allUsers !== undefined) {
-      allUsers.forEach( user => {
-        if (email === user.email && password === "paprika") {
-          dispatch(loggedIn());
-        } else {
-          setIncorrectStyle(true);
-        }
-      });
+  const [mutationLogin, { data: user }] = useLoginMutation();
+  async function login() {
+    await mutationLogin({ variables: {userLoginInput: {email, password}}})
+    if ( user?.login.token ) {
+      dispatch(loggedIn());
+      dispatch(setUser(user.login.user));
+    } else {
+      setIncorrectStyle(true);
     }
   }
 
