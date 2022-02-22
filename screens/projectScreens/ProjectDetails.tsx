@@ -2,7 +2,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { RouteProp } from "@react-navigation/native";
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
-import { FlatList, ScrollView } from "react-native-gesture-handler";
+import { FlatList } from "react-native-gesture-handler";
 import { Project, useGetTaskByProjectQuery } from "../../graphql/graphql";
 
 export default function ProjectDetails({
@@ -15,7 +15,7 @@ export default function ProjectDetails({
     variables: { projectId: project.id },
   });
   return (
-    <ScrollView style={styles.container}>
+    <View style={styles.container}>
       <View style={styles.header} />
       <View style={styles.section}>
         <Text style={styles.title}>{project.name}</Text>
@@ -24,10 +24,21 @@ export default function ProjectDetails({
         </Text>
         <View style={styles.dates}>
           <View style={styles.date}>
-            <Text>Créé le : {toDate(project.startAt)}</Text>
+            <Text>Début: {toLocaleDate(project.startAt)}</Text>
           </View>
-          <View style={styles.date}>
-            <Text>Finis le : {toDate(project.endAt)}</Text>
+          <Ionicons name="calendar-outline" size={30} />
+
+          <View
+            style={[
+              styles.date,
+              {
+                backgroundColor: moreThanNow(project.endAt)
+                  ? "#ff726f"
+                  : "lightgreen",
+              },
+            ]}
+          >
+            <Text>Fin: {toLocaleDate(project.endAt)}</Text>
           </View>
         </View>
         <Text style={styles.description}>{project.description}</Text>
@@ -53,13 +64,20 @@ export default function ProjectDetails({
           refreshing={loading}
         />
       </View>
-    </ScrollView>
+    </View>
   );
 }
 
-const toDate = (date: string): string => {
+const toLocaleDate = (date: string): string => {
   const formatedDate = new Date(date);
   return formatedDate.toLocaleDateString();
+};
+
+const moreThanNow = (date: string): boolean => {
+  const now = new Date();
+  const compare = new Date(date);
+  if (now < compare) return true;
+  return false;
 };
 
 const styles = StyleSheet.create({
@@ -70,13 +88,14 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     padding: 20,
     borderRadius: 25,
+    height: "97%",
   },
   client: {
     color: "gray",
     textTransform: "uppercase",
     alignSelf: "center",
   },
-  description: { textAlign: "center" },
+  description: { textAlign: "center", marginTop: 30 },
   header: {
     height: 2,
     marginBottom: 8,
