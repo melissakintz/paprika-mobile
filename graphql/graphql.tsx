@@ -66,8 +66,10 @@ export type LoginUserInput = {
 export type Mutation = {
   __typename?: 'Mutation';
   addDocument: Document;
+  assignProject?: Maybe<Scalars['Boolean']>;
   createComment: Comment;
   createProject: Project;
+  createProjectRole: ProjectRole;
   createTask: Task;
   deleteComment: Scalars['Boolean'];
   deleteDocument: Document;
@@ -89,6 +91,12 @@ export type MutationAddDocumentArgs = {
 };
 
 
+export type MutationAssignProjectArgs = {
+  projectId: Scalars['String'];
+  roleId: Scalars['String'];
+};
+
+
 export type MutationCreateCommentArgs = {
   commentInput: CommentInput;
 };
@@ -96,6 +104,11 @@ export type MutationCreateCommentArgs = {
 
 export type MutationCreateProjectArgs = {
   projectInput: ProjectInput;
+};
+
+
+export type MutationCreateProjectRoleArgs = {
+  roleName: Scalars['String'];
 };
 
 
@@ -182,6 +195,12 @@ export type ProjectInput = {
   name: Scalars['String'];
 };
 
+export type ProjectRole = {
+  __typename?: 'ProjectRole';
+  id: Scalars['ID'];
+  name: Scalars['String'];
+};
+
 export type Query = {
   __typename?: 'Query';
   getAllDocumentsByProject?: Maybe<Array<Maybe<Document>>>;
@@ -190,9 +209,11 @@ export type Query = {
   getAllUsers: Array<User>;
   getCommentsByTask: Array<Comment>;
   getDocumentById?: Maybe<Document>;
-  getProject: Project;
+  getProjectById: Project;
+  getProjectRoles: Array<Maybe<ProjectRole>>;
+  getProjectsByUser: Array<Maybe<Project>>;
   getTask: Task;
-  getTaskByProject: Task;
+  getTaskByProject: Array<Maybe<Task>>;
   getUser: User;
 };
 
@@ -212,7 +233,7 @@ export type QueryGetDocumentByIdArgs = {
 };
 
 
-export type QueryGetProjectArgs = {
+export type QueryGetProjectByIdArgs = {
   projectId: Scalars['String'];
 };
 
@@ -345,19 +366,19 @@ export type GetTaskByProjectQueryVariables = Exact<{
 }>;
 
 
-export type GetTaskByProjectQuery = { __typename?: 'Query', getTaskByProject: { __typename?: 'Task', id: string, name: string, status: Status, description: string, priority: Priority, projectId: string, timing?: string | null | undefined } };
+export type GetTaskByProjectQuery = { __typename?: 'Query', getTaskByProject: Array<{ __typename?: 'Task', id: string, name: string, status: Status, description: string, priority: Priority, projectId: string, timing?: string | null | undefined } | null | undefined> };
 
 export type GetAllProjectsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type GetAllProjectsQuery = { __typename?: 'Query', getAllProjects: Array<{ __typename?: 'Project', id: string, startAt?: any | null | undefined, endAt?: any | null | undefined, name: string, client: string, description: string }> };
 
-export type GetProjectQueryVariables = Exact<{
+export type GetProjectByIdQueryVariables = Exact<{
   projectId: Scalars['String'];
 }>;
 
 
-export type GetProjectQuery = { __typename?: 'Query', getProject: { __typename?: 'Project', id: string, startAt?: any | null | undefined, endAt?: any | null | undefined, name: string, client: string, description: string } };
+export type GetProjectByIdQuery = { __typename?: 'Query', getProjectById: { __typename?: 'Project', id: string, startAt?: any | null | undefined, endAt?: any | null | undefined, name: string, client: string, description: string } };
 
 export type GetCommentsTaskQueryVariables = Exact<{
   taskId: Scalars['String'];
@@ -365,6 +386,11 @@ export type GetCommentsTaskQueryVariables = Exact<{
 
 
 export type GetCommentsTaskQuery = { __typename?: 'Query', getCommentsByTask: Array<{ __typename?: 'Comment', id: string, content: string, userId: string, createdAt: any, taskId: string }> };
+
+export type GetProjectsByUserQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetProjectsByUserQuery = { __typename?: 'Query', getProjectsByUser: Array<{ __typename?: 'Project', id: string, startAt?: any | null | undefined, endAt?: any | null | undefined, name: string, client: string, description: string } | null | undefined> };
 
 
 export const CreateProjectDocument = gql`
@@ -678,9 +704,9 @@ export function useGetAllProjectsLazyQuery(baseOptions?: Apollo.LazyQueryHookOpt
 export type GetAllProjectsQueryHookResult = ReturnType<typeof useGetAllProjectsQuery>;
 export type GetAllProjectsLazyQueryHookResult = ReturnType<typeof useGetAllProjectsLazyQuery>;
 export type GetAllProjectsQueryResult = Apollo.QueryResult<GetAllProjectsQuery, GetAllProjectsQueryVariables>;
-export const GetProjectDocument = gql`
-    query GetProject($projectId: String!) {
-  getProject(projectId: $projectId) {
+export const GetProjectByIdDocument = gql`
+    query GetProjectById($projectId: String!) {
+  getProjectById(projectId: $projectId) {
     id
     startAt
     endAt
@@ -692,32 +718,32 @@ export const GetProjectDocument = gql`
     `;
 
 /**
- * __useGetProjectQuery__
+ * __useGetProjectByIdQuery__
  *
- * To run a query within a React component, call `useGetProjectQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetProjectQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useGetProjectByIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetProjectByIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useGetProjectQuery({
+ * const { data, loading, error } = useGetProjectByIdQuery({
  *   variables: {
  *      projectId: // value for 'projectId'
  *   },
  * });
  */
-export function useGetProjectQuery(baseOptions: Apollo.QueryHookOptions<GetProjectQuery, GetProjectQueryVariables>) {
+export function useGetProjectByIdQuery(baseOptions: Apollo.QueryHookOptions<GetProjectByIdQuery, GetProjectByIdQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetProjectQuery, GetProjectQueryVariables>(GetProjectDocument, options);
+        return Apollo.useQuery<GetProjectByIdQuery, GetProjectByIdQueryVariables>(GetProjectByIdDocument, options);
       }
-export function useGetProjectLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetProjectQuery, GetProjectQueryVariables>) {
+export function useGetProjectByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetProjectByIdQuery, GetProjectByIdQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetProjectQuery, GetProjectQueryVariables>(GetProjectDocument, options);
+          return Apollo.useLazyQuery<GetProjectByIdQuery, GetProjectByIdQueryVariables>(GetProjectByIdDocument, options);
         }
-export type GetProjectQueryHookResult = ReturnType<typeof useGetProjectQuery>;
-export type GetProjectLazyQueryHookResult = ReturnType<typeof useGetProjectLazyQuery>;
-export type GetProjectQueryResult = Apollo.QueryResult<GetProjectQuery, GetProjectQueryVariables>;
+export type GetProjectByIdQueryHookResult = ReturnType<typeof useGetProjectByIdQuery>;
+export type GetProjectByIdLazyQueryHookResult = ReturnType<typeof useGetProjectByIdLazyQuery>;
+export type GetProjectByIdQueryResult = Apollo.QueryResult<GetProjectByIdQuery, GetProjectByIdQueryVariables>;
 export const GetCommentsTaskDocument = gql`
     query GetCommentsTask($taskId: String!) {
   getCommentsByTask(taskId: $taskId) {
@@ -757,3 +783,42 @@ export function useGetCommentsTaskLazyQuery(baseOptions?: Apollo.LazyQueryHookOp
 export type GetCommentsTaskQueryHookResult = ReturnType<typeof useGetCommentsTaskQuery>;
 export type GetCommentsTaskLazyQueryHookResult = ReturnType<typeof useGetCommentsTaskLazyQuery>;
 export type GetCommentsTaskQueryResult = Apollo.QueryResult<GetCommentsTaskQuery, GetCommentsTaskQueryVariables>;
+export const GetProjectsByUserDocument = gql`
+    query GetProjectsByUser {
+  getProjectsByUser {
+    id
+    startAt
+    endAt
+    name
+    client
+    description
+  }
+}
+    `;
+
+/**
+ * __useGetProjectsByUserQuery__
+ *
+ * To run a query within a React component, call `useGetProjectsByUserQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetProjectsByUserQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetProjectsByUserQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetProjectsByUserQuery(baseOptions?: Apollo.QueryHookOptions<GetProjectsByUserQuery, GetProjectsByUserQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetProjectsByUserQuery, GetProjectsByUserQueryVariables>(GetProjectsByUserDocument, options);
+      }
+export function useGetProjectsByUserLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetProjectsByUserQuery, GetProjectsByUserQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetProjectsByUserQuery, GetProjectsByUserQueryVariables>(GetProjectsByUserDocument, options);
+        }
+export type GetProjectsByUserQueryHookResult = ReturnType<typeof useGetProjectsByUserQuery>;
+export type GetProjectsByUserLazyQueryHookResult = ReturnType<typeof useGetProjectsByUserLazyQuery>;
+export type GetProjectsByUserQueryResult = Apollo.QueryResult<GetProjectsByUserQuery, GetProjectsByUserQueryVariables>;
