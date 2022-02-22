@@ -1,8 +1,8 @@
-import { useGetAllUsersQuery } from '../graphql/graphql';
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, Image, TextInput, TouchableOpacity } from 'react-native';
-import { useDispatch } from 'react-redux'
-import { loggedIn } from '../Redux/login'
+import { Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { useDispatch } from 'react-redux';
+import { useGetAllUsersQuery } from '../graphql/graphql';
+import { loggedIn } from '../Redux/login';
 
 export default function LoginScreen() {
   const dispatch = useDispatch()

@@ -15,10 +15,7 @@ export type Scalars = {
   Float: number;
   /** Date custom scalar type */
   Date: any;
-<<<<<<< HEAD
-=======
   Upload: any;
->>>>>>> c75c121d04a3111b41a6196c9778595a171111b6
 };
 
 export type Comment = {
@@ -35,8 +32,6 @@ export type CommentInput = {
   taskId: Scalars['String'];
 };
 
-<<<<<<< HEAD
-=======
 export type Document = {
   __typename?: 'Document';
   fileName: Scalars['String'];
@@ -57,7 +52,6 @@ export type File = {
   mimetype: Scalars['String'];
 };
 
->>>>>>> c75c121d04a3111b41a6196c9778595a171111b6
 export type LoginResponse = {
   __typename?: 'LoginResponse';
   token?: Maybe<Scalars['String']>;
@@ -71,42 +65,30 @@ export type LoginUserInput = {
 
 export type Mutation = {
   __typename?: 'Mutation';
-<<<<<<< HEAD
-=======
   addDocument: Document;
->>>>>>> c75c121d04a3111b41a6196c9778595a171111b6
   createComment: Comment;
   createProject: Project;
   createTask: Task;
   deleteComment: Scalars['Boolean'];
-<<<<<<< HEAD
-=======
   deleteDocument: Document;
->>>>>>> c75c121d04a3111b41a6196c9778595a171111b6
   deleteProject?: Maybe<Scalars['Boolean']>;
   deleteTask?: Maybe<Scalars['Boolean']>;
   deleteUser?: Maybe<Scalars['Boolean']>;
   login: LoginResponse;
   register: User;
-<<<<<<< HEAD
-=======
   updateDocument: Document;
->>>>>>> c75c121d04a3111b41a6196c9778595a171111b6
   updateProject: Project;
   updateTask: Task;
   updateUser: User;
 };
 
 
-<<<<<<< HEAD
-=======
 export type MutationAddDocumentArgs = {
   DocumentInput: DocumentInput;
   file: Scalars['Upload'];
 };
 
 
->>>>>>> c75c121d04a3111b41a6196c9778595a171111b6
 export type MutationCreateCommentArgs = {
   commentInput: CommentInput;
 };
@@ -127,14 +109,11 @@ export type MutationDeleteCommentArgs = {
 };
 
 
-<<<<<<< HEAD
-=======
 export type MutationDeleteDocumentArgs = {
   docId: Scalars['String'];
 };
 
 
->>>>>>> c75c121d04a3111b41a6196c9778595a171111b6
 export type MutationDeleteProjectArgs = {
   projectId: Scalars['String'];
 };
@@ -160,15 +139,12 @@ export type MutationRegisterArgs = {
 };
 
 
-<<<<<<< HEAD
-=======
 export type MutationUpdateDocumentArgs = {
   docId: Scalars['String'];
   newName: Scalars['String'];
 };
 
 
->>>>>>> c75c121d04a3111b41a6196c9778595a171111b6
 export type MutationUpdateProjectArgs = {
   projectId: Scalars['String'];
   updateProjectInput: UpdateProjectInput;
@@ -208,48 +184,34 @@ export type ProjectInput = {
 
 export type Query = {
   __typename?: 'Query';
-<<<<<<< HEAD
-=======
   getAllDocumentsByProject?: Maybe<Array<Maybe<Document>>>;
->>>>>>> c75c121d04a3111b41a6196c9778595a171111b6
   getAllProjects: Array<Project>;
   getAllTasks: Array<Task>;
   getAllUsers: Array<User>;
   getCommentsByTask: Array<Comment>;
-<<<<<<< HEAD
-  getProject: Project;
-  getTask: Task;
-=======
   getDocumentById?: Maybe<Document>;
   getProject: Project;
   getTask: Task;
   getTaskByProject: Task;
->>>>>>> c75c121d04a3111b41a6196c9778595a171111b6
   getUser: User;
 };
 
 
-<<<<<<< HEAD
-=======
 export type QueryGetAllDocumentsByProjectArgs = {
   projectId: Scalars['String'];
 };
 
 
->>>>>>> c75c121d04a3111b41a6196c9778595a171111b6
 export type QueryGetCommentsByTaskArgs = {
   taskId: Scalars['String'];
 };
 
 
-<<<<<<< HEAD
-=======
 export type QueryGetDocumentByIdArgs = {
   docId: Scalars['String'];
 };
 
 
->>>>>>> c75c121d04a3111b41a6196c9778595a171111b6
 export type QueryGetProjectArgs = {
   projectId: Scalars['String'];
 };
@@ -260,14 +222,11 @@ export type QueryGetTaskArgs = {
 };
 
 
-<<<<<<< HEAD
-=======
 export type QueryGetTaskByProjectArgs = {
   projectId: Scalars['String'];
 };
 
 
->>>>>>> c75c121d04a3111b41a6196c9778595a171111b6
 export type QueryGetUserArgs = {
   userId: Scalars['String'];
 };
@@ -342,8 +301,6 @@ export type UserInput = {
   password: Scalars['String'];
 };
 
-<<<<<<< HEAD
-=======
 export type CreateProjectMutationVariables = Exact<{
   projectInput: ProjectInput;
 }>;
@@ -359,7 +316,6 @@ export type UpdateProjectMutationVariables = Exact<{
 
 export type UpdateProjectMutation = { __typename?: 'Mutation', updateProject: { __typename?: 'Project', id: string, name: string, client: string, description: string } };
 
->>>>>>> c75c121d04a3111b41a6196c9778595a171111b6
 export type GetAllUsersQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -384,8 +340,6 @@ export type GetTasksQueryVariables = Exact<{
 
 export type GetTasksQuery = { __typename?: 'Query', getTask: { __typename?: 'Task', id: string, name: string, status: Status, description: string, priority: Priority, projectId: string, timing?: string | null | undefined } };
 
-<<<<<<< HEAD
-=======
 export type GetTaskByProjectQueryVariables = Exact<{
   projectId: Scalars['String'];
 }>;
@@ -393,7 +347,6 @@ export type GetTaskByProjectQueryVariables = Exact<{
 
 export type GetTaskByProjectQuery = { __typename?: 'Query', getTaskByProject: { __typename?: 'Task', id: string, name: string, status: Status, description: string, priority: Priority, projectId: string, timing?: string | null | undefined } };
 
->>>>>>> c75c121d04a3111b41a6196c9778595a171111b6
 export type GetAllProjectsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -414,8 +367,6 @@ export type GetCommentsTaskQueryVariables = Exact<{
 export type GetCommentsTaskQuery = { __typename?: 'Query', getCommentsByTask: Array<{ __typename?: 'Comment', id: string, content: string, userId: string, createdAt: any, taskId: string }> };
 
 
-<<<<<<< HEAD
-=======
 export const CreateProjectDocument = gql`
     mutation createProject($projectInput: ProjectInput!) {
   createProject(projectInput: $projectInput) {
@@ -489,7 +440,6 @@ export function useUpdateProjectMutation(baseOptions?: Apollo.MutationHookOption
 export type UpdateProjectMutationHookResult = ReturnType<typeof useUpdateProjectMutation>;
 export type UpdateProjectMutationResult = Apollo.MutationResult<UpdateProjectMutation>;
 export type UpdateProjectMutationOptions = Apollo.BaseMutationOptions<UpdateProjectMutation, UpdateProjectMutationVariables>;
->>>>>>> c75c121d04a3111b41a6196c9778595a171111b6
 export const GetAllUsersDocument = gql`
     query getAllUsers {
   getAllUsers {
@@ -648,8 +598,6 @@ export function useGetTasksLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<G
 export type GetTasksQueryHookResult = ReturnType<typeof useGetTasksQuery>;
 export type GetTasksLazyQueryHookResult = ReturnType<typeof useGetTasksLazyQuery>;
 export type GetTasksQueryResult = Apollo.QueryResult<GetTasksQuery, GetTasksQueryVariables>;
-<<<<<<< HEAD
-=======
 export const GetTaskByProjectDocument = gql`
     query GetTaskByProject($projectId: String!) {
   getTaskByProject(projectId: $projectId) {
@@ -691,7 +639,6 @@ export function useGetTaskByProjectLazyQuery(baseOptions?: Apollo.LazyQueryHookO
 export type GetTaskByProjectQueryHookResult = ReturnType<typeof useGetTaskByProjectQuery>;
 export type GetTaskByProjectLazyQueryHookResult = ReturnType<typeof useGetTaskByProjectLazyQuery>;
 export type GetTaskByProjectQueryResult = Apollo.QueryResult<GetTaskByProjectQuery, GetTaskByProjectQueryVariables>;
->>>>>>> c75c121d04a3111b41a6196c9778595a171111b6
 export const GetAllProjectsDocument = gql`
     query GetAllProjects {
   getAllProjects {
