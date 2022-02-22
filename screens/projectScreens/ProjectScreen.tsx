@@ -1,23 +1,16 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
-import React, { useState } from "react";
+import React from "react";
 import {
   FlatList,
-  Modal,
   Pressable,
   StyleSheet,
   Text,
-  TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
 import { Swipeable } from "react-native-gesture-handler";
 import { NavigationStackScreenProps } from "react-navigation-stack";
-import {
-  Project,
-  useCreateProjectMutation,
-  useGetAllProjectsQuery,
-  useUpdateProjectMutation,
-} from "../../graphql/graphql";
+import { Project, useGetProjectsByUserQuery } from "../../graphql/graphql";
 
 export default function ProjectScreen({
   navigation,
@@ -29,14 +22,13 @@ export default function ProjectScreen({
     refetch,
     loading,
     fetchMore,
-  } = useGetAllProjectsQuery();
-  const [createModalVisible, setCreateModalVisible] = useState(false);
+  } = useGetProjectsByUserQuery();
 
   return (
     <View style={styles.safeContainer}>
       <FlatList
         contentContainerStyle={styles.container}
-        data={projects?.getAllProjects}
+        data={projects?.getProjectsByUser}
         renderItem={(project) => (
           <ProjectCard project={project.item} navigation={navigation} />
         )}
@@ -46,172 +38,9 @@ export default function ProjectScreen({
         onEndReached={() => fetchMore}
         initialNumToRender={5}
       />
-      <TouchableOpacity
-        style={styles.add}
-        onPress={() => setCreateModalVisible(true)}
-      >
-        <Ionicons name="add-circle-outline" size={40} color="#E33636" />
-      </TouchableOpacity>
-      <CreateModal
-        refetch={refetch}
-        setCreateModalVisible={setCreateModalVisible}
-        createModalVisible={createModalVisible}
-      />
     </View>
   );
 }
-
-const CreateModal = ({
-  refetch,
-  setCreateModalVisible,
-  createModalVisible,
-}: {
-  setCreateModalVisible: (show: boolean) => void;
-  createModalVisible: boolean;
-  refetch: () => Promise<any>;
-}): JSX.Element => {
-  const [projectName, setProjectName] = useState("");
-  const [projectClient, setProjectClient] = useState("");
-  const [projectDescription, setProjectDescription] = useState("");
-  const [createProject] = useCreateProjectMutation();
-
-  return (
-    <Modal
-      animationType="slide"
-      transparent={true}
-      visible={createModalVisible}
-      onRequestClose={() => {
-        setCreateModalVisible(!createModalVisible);
-      }}
-    >
-      <View style={styles.centeredView}>
-        <View style={styles.modalView}>
-          <Pressable
-            style={styles.close}
-            onPress={() => setCreateModalVisible(false)}
-          >
-            <Ionicons name="close-circle-outline" size={24} color="red" />
-          </Pressable>
-
-          <Text style={styles.title}>Ajouter un project</Text>
-          <TextInput
-            placeholder="nom du projet"
-            value={projectName}
-            style={styles.input}
-            onChangeText={(value) => setProjectName(value)}
-          />
-          <TextInput
-            placeholder="Client"
-            value={projectClient}
-            style={styles.input}
-            onChangeText={(value) => setProjectClient(value)}
-          />
-          <TextInput
-            placeholder="description"
-            value={projectDescription}
-            style={styles.input}
-            onChangeText={(value) => setProjectDescription(value)}
-          />
-          <Pressable
-            style={[styles.button, styles.buttonClose]}
-            onPress={() => {
-              createProject({
-                variables: {
-                  projectInput: {
-                    name: projectName,
-                    client: projectClient,
-                    description: projectDescription,
-                  },
-                },
-              });
-              setCreateModalVisible(false);
-              refetch();
-            }}
-          >
-            <Text style={styles.textStyle}>Ajouter</Text>
-          </Pressable>
-        </View>
-      </View>
-    </Modal>
-  );
-};
-
-const UpdateModal = ({
-  project,
-  setShowUpdateModal,
-  showUpdateModal,
-}: {
-  project: Project;
-  setShowUpdateModal: (show: boolean) => void;
-  showUpdateModal: boolean;
-}): JSX.Element => {
-  const [projectName, setProjectName] = useState(project.name);
-  const [projectClient, setProjectClient] = useState(project.client);
-  const [projectDescription, setProjectDescription] = useState(
-    project.description
-  );
-  const [updateProject] = useUpdateProjectMutation();
-
-  return (
-    <Modal
-      animationType="slide"
-      transparent={true}
-      visible={showUpdateModal}
-      onRequestClose={() => {
-        setShowUpdateModal(!showUpdateModal);
-      }}
-    >
-      <View style={styles.centeredView}>
-        <View style={styles.modalView}>
-          <Pressable
-            style={styles.close}
-            onPress={() => setShowUpdateModal(false)}
-          >
-            <Ionicons name="close-circle-outline" size={24} color="red" />
-          </Pressable>
-
-          <Text style={styles.title}>Modifier le project</Text>
-          <TextInput
-            placeholder="nom du projet"
-            value={projectName}
-            style={styles.input}
-            onChangeText={(value) => setProjectName(value)}
-          />
-          <TextInput
-            placeholder="Client"
-            value={projectClient}
-            style={styles.input}
-            onChangeText={(value) => setProjectClient(value)}
-          />
-          <TextInput
-            placeholder="description"
-            value={projectDescription}
-            style={[styles.input]}
-            onChangeText={(value) => setProjectDescription(value)}
-          />
-          <Pressable
-            style={[styles.button, styles.buttonClose]}
-            onPress={() => {
-              updateProject({
-                variables: {
-                  projectId: project.id,
-                  updateProjectInput: {
-                    name: projectName,
-                    description: projectDescription,
-                    client: projectClient,
-                  },
-                },
-              });
-              setShowUpdateModal(false);
-            }}
-          >
-            <Text style={styles.textStyle}>Modifier</Text>
-          </Pressable>
-        </View>
-      </View>
-    </Modal>
-  );
-};
 
 const ProjectCard = ({
   project,
@@ -220,7 +49,6 @@ const ProjectCard = ({
   project: Project;
   navigation: NavigationStackScreenProps;
 }): JSX.Element => {
-  const [showUpdateModal, setShowUpdateModal] = useState(false);
   return (
     <>
       <Swipeable
@@ -228,7 +56,6 @@ const ProjectCard = ({
         onSwipeableRightOpen={() => console.log("will delete")}
       >
         <Pressable
-          onLongPress={() => setShowUpdateModal(true)}
           style={styles.card}
           onPress={() =>
             navigation.navigate("ProjetDetails", { project: project })
@@ -252,11 +79,6 @@ const ProjectCard = ({
           </Text>
         </Pressable>
       </Swipeable>
-      <UpdateModal
-        project={project}
-        setShowUpdateModal={setShowUpdateModal}
-        showUpdateModal={showUpdateModal}
-      />
     </>
   );
 };
@@ -270,15 +92,6 @@ const RightAction = () => {
 };
 
 const styles = StyleSheet.create({
-  update: {
-    flex: 1,
-    backgroundColor: "lightgray",
-    borderRadius: 25,
-    justifyContent: "center",
-    margin: 5,
-    padding: 13,
-    alignItems: "flex-end",
-  },
   title: {
     fontWeight: "bold",
     textAlign: "center",
@@ -306,63 +119,8 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     backgroundColor: "orange",
   },
-  add: {
-    alignItems: "center",
-    color: "orange",
-    justifyContent: "center",
-    margin: 10,
-  },
-  centeredView: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    marginTop: 22,
-  },
-  modalView: {
-    backgroundColor: "white",
-    borderRadius: 20,
-    width: "90%",
-    padding: 35,
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
-  },
-  button: {
-    borderRadius: 20,
-    padding: 10,
-    elevation: 2,
-  },
-  buttonOpen: {
-    backgroundColor: "#F194FF",
-  },
-  buttonClose: {
-    backgroundColor: "#2196F3",
-  },
-  textStyle: {
-    color: "white",
-    fontWeight: "bold",
-    textAlign: "center",
-  },
   safeContainer: {
     height: "100%",
-  },
-  modalText: {
-    marginBottom: 15,
-    textAlign: "center",
-  },
-  input: {
-    borderBottomWidth: 1,
-    borderBottomColor: "black",
-    margin: 5,
-  },
-  close: {
-    margin: -10,
-    alignSelf: "flex-end",
   },
   badge: {
     padding: 4,
