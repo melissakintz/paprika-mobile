@@ -10,7 +10,6 @@ import {
 } from 'react-native';
 import Ionicons from "@expo/vector-icons/Ionicons";
 import {Calendar, CalendarList, Agenda} from 'react-native-calendars';
-import img from "../assets/paprika1.png";
 import { Appbar } from 'react-native-paper';
 
 import { useGetAllProjectsLazyQuery, useGetAllProjectsQuery } from "../graphql/graphql";
@@ -32,7 +31,7 @@ export default function HomeScreen() {
     }
 
     const { data: project, error } = useGetAllProjectsQuery();
-    const { data: tasks, errorTasks } = useGetAllTasksQuery();
+    const { data: tasks } = useGetAllTasksQuery();
     // console.log(project?.getAllProjects[0].description);
     const allTasksArray = tasks?.getAllTasks;
     const numberOfTasks = allTasksArray?.length;
@@ -41,7 +40,11 @@ export default function HomeScreen() {
 
     const [projectList, setProjectList] = useState(false);
     const [taskList, setTaskList] = useState(false);
+    const [helpModal, setHelpModal] = useState(false);
+    const [projectDescription, setProjectDescription] = useState(false);
 
+    const date = new Date();
+    const currentDate = date.getFullYear()+'-'+(date.getMonth()+1)+'-'+date.getDate();
 
     return (
         <ScrollView>
@@ -68,7 +71,7 @@ export default function HomeScreen() {
             <View>
                 <Calendar
                     // Initially visible month. Default = Date()
-                    current={'2021-10-30'}
+                    current={'2022-02-22'}
                     // Month format in calendar title. Formatting values: http://arshaw.com/xdate/#Formatting
                     monthFormat={'dd MM yyyy'}
                     // Handler which gets executed when visible month changes in calendar. Default = undefined
@@ -86,18 +89,29 @@ export default function HomeScreen() {
                     firstDay={1}
                 />
             </View>
-            <View style={styles.containerIcon}>
-                <Ionicons style={styles.icon} name='arrow-back-circle-outline' onPress={() => console.log('test')}/>
-                <Ionicons style={styles.icon} name='help-circle-outline' onPress={() => console.log('test')}/>
-            </View>
             <Image
                 style={styles.img}
-                source={img}
+                source={require("../assets/paprika1.png")}
             />
             <View style={styles.viewContainer}>
-                <View style={styles.containerText}>
+                <TouchableOpacity style={styles.containerText} onPress={() => {
+                    if (helpModal == true) {
+                        setHelpModal(false)
+                    } else {
+                        setHelpModal(true)
+                    }
+                }}>
                     <Text style={styles.text}>Besoin d'aide ?</Text>
-                </View>
+                    {helpModal ? (
+                        <View>
+                            <Text style={styles.textPadding}>Lorem ipsum dolor sit amet consectetur adipisicing elit. Ab accusamus eum possimus perspiciatis provident ea reiciendis excepturi minima atque suscipit inventore, esse temporibus sapiente autem quod veniam totam voluptates voluptatibus.</Text>
+                            <Text style={styles.textPadding}>Lorem ipsum dolor sit amet consectetur adipisicing elit. Accusantium earum sequi nemo nihil nesciunt fuga obcaecati temporibus magni doloremque laborum laudantium necessitatibus harum odio fugiat tempore, modi, cupiditate non natus.</Text>
+                            <Text style={styles.textPadding}>Lorem ipsum dolor sit amet consectetur adipisicing elit. Accusantium earum sequi nemo nihil nesciunt fuga obcaecati temporibus magni doloremque laborum laudantium necessitatibus harum odio fugiat tempore, modi, cupiditate non natus.</Text>
+                        </View>
+                    ) : (
+                        <Text>Cliquez pour en voir plus </Text>
+                    )}
+                </TouchableOpacity>
                 <TouchableOpacity style={styles.containerText} onPress={() => {
                         if (projectList == true) {
                             setProjectList(false);
@@ -111,10 +125,26 @@ export default function HomeScreen() {
                     </Text>
                     <Text style={styles.listProject}>
                         {projectList? (
-                        <FlatList
+                            <FlatList
                             data={project?.getAllProjects}
-                            renderItem={(project) => (
-                                <Text> {project.item.name }</Text>
+                                renderItem={(project) => (
+                                    <TouchableOpacity style={styles.textPadding} onPress={() => {
+                                        if (projectDescription == true) {
+                                            setProjectDescription(false);                                            
+                                        } else {
+                                            setProjectDescription(true);
+                                        }
+                                }}>
+                                    <Text> {project.item.name }</Text>
+                                        <Text> {project.item.client}</Text>
+                                        {projectDescription ? (
+                                            <View>
+                                                <Text style={styles.textPadding}>{ project.item.description}</Text>
+                                            </View>
+                                        ) : (
+                                            <Text></Text>
+                                        )}
+                                </TouchableOpacity>
                             )}
                         />
                         ) : (
@@ -137,7 +167,7 @@ export default function HomeScreen() {
                             <FlatList
                                 data={tasks?.getAllTasks}
                                 renderItem={(tasks) => (
-                                    <View>
+                                    <View style={styles.textPadding}>
                                         <Text>{tasks.item.name}</Text>
                                         <Text>Priorité : {tasks.item.priority}</Text>
                                     </View>
@@ -169,7 +199,6 @@ const styles = StyleSheet.create({
         borderBottomRightRadius: 20,
     },
     containerText: {
-        position: "relative",
         marginLeft: "auto",
         marginRight: "auto",
         width: "75%",
@@ -238,5 +267,9 @@ const styles = StyleSheet.create({
         color: "black",
         marginLeft: "auto",
         display: "flex"
+    },
+    textPadding: {
+        paddingTop: 20,
+        paddingBottom: 20
     }
 });
