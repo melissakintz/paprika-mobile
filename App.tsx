@@ -17,6 +17,7 @@ import ProjectDetails from "./screens/projectScreens/ProjectDetails";
 import ProjectScreen from "./screens/projectScreens/ProjectScreen";
 import OneTaskScreen from "./screens/taskScreens/OneTaskScreen";
 import TaskScreen from "./screens/taskScreens/TaskScreen";
+import ProfilScreen from "./screens/profilScreens/ProfilScreen";
 import store from "./store";
 
 const link = new HttpLink({ uri: "http://192.168.1.88:4000/graphql" });
@@ -109,6 +110,11 @@ const HomeStack = () => {
           name="HomeScreen"
           component={HomeScreen}
           options={{ title: "Accueil" }}
+        />
+        <Stack.Screen
+          name="ProfilScreen"
+          component={ProfilScreen}
+          options={{ title: "Profile" }}
         />
       </Stack.Group>
     </Stack.Navigator>

@@ -12,19 +12,18 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import {Calendar, CalendarList, Agenda} from 'react-native-calendars';
 import { Appbar } from 'react-native-paper';
 
-import { useGetAllProjectsLazyQuery, useGetAllProjectsQuery } from "../graphql/graphql";
+import { useGetAllProjectsLazyQuery, useGetAllProjectsQuery, useGetAllUsersQuery, useGetUserQuery } from "../graphql/graphql";
 import { useGetAllTasksLazyQuery, useGetAllTasksQuery } from "../graphql/graphql";
 import { useDispatch } from 'react-redux';
 import { loggedOut } from '../Redux/login';
-
+import { User } from "../graphql/graphql";
 import ProjectScreen from "./projectScreens/ProjectScreen";
 import ProjectDetails from "./projectScreens/ProjectDetails";
 
 import { NavigationRouteContext, TabRouter, useNavigation, useRoute } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
-
-export default function HomeScreen() {
+export default function HomeScreen({ navigation }: any) {
     const dispatch = useDispatch();
     function logout() {
         dispatch(loggedOut())
@@ -42,7 +41,13 @@ export default function HomeScreen() {
     const [taskList, setTaskList] = useState(false);
     const [helpModal, setHelpModal] = useState(false);
     const [projectDescription, setProjectDescription] = useState(false);
+    const currentUserTab = useGetAllUsersQuery();
+    const currentUser = currentUserTab.data?.getAllUsers[0].id;
 
+    const { data: user, error: errorUser } = useGetUserQuery({
+        variables: { userId: currentUser! },
+    });
+console.log()
     const date = new Date();
     const currentDate = date.getFullYear()+'-'+(date.getMonth()+1)+'-'+date.getDate();
 
@@ -51,7 +56,7 @@ export default function HomeScreen() {
             <View style={styles.container}>
                 <TouchableOpacity
                     style={styles.compteBtn}
-                    onPress={logout}
+                    onPress={()=> navigation.navigate('ProfilScreen', {user})}
                 >
                     <Text style={{ color: '#F2F2F2' }}>Mon compte</Text>
                 </TouchableOpacity>
@@ -113,36 +118,24 @@ export default function HomeScreen() {
                     )}
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.containerText} onPress={() => {
-                        if (projectList == true) {
-                            setProjectList(false);
-                        } else {
-                            setProjectList(true);
-                        }
+                    setProjectList(!projectList)
                     }}>
                     <Text style={styles.text}>Projets en cours</Text>
                     <Text style={styles.text}>
                         ({numberOfProject})
                     </Text>
-                    <Text style={styles.listProject}>
+                    <View>
                         {projectList? (
                             <FlatList
                             data={project?.getAllProjects}
                                 renderItem={(project) => (
                                     <TouchableOpacity style={styles.textPadding} onPress={() => {
-                                        if (projectDescription == true) {
-                                            setProjectDescription(false);                                            
-                                        } else {
-                                            setProjectDescription(true);
-                                        }
+                                        setProjectDescription(!projectDescription)
                                 }}>
                                     <Text> {project.item.name }</Text>
                                         <Text> {project.item.client}</Text>
-                                        {projectDescription ? (
-                                            <View>
-                                                <Text style={styles.textPadding}>{ project.item.description}</Text>
-                                            </View>
-                                        ) : (
-                                            <Text></Text>
+                                        {projectDescription && (
+                                            <Text style={styles.textPadding}>{ project.item.description}</Text>
                                         )}
                                 </TouchableOpacity>
                             )}
@@ -151,7 +144,7 @@ export default function HomeScreen() {
                                 <Text style={styles.textCenterBlack}>Cliquez pour en voir plus </Text>
                         )}
 
-                    </Text>
+                    </View>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.containerText} onPress={() => {
                     if (taskList == true) {
@@ -184,15 +177,9 @@ export default function HomeScreen() {
 
 
 
-
 const styles = StyleSheet.create({
     viewContainer: {
-        display: "flex",
-        flexDirection: "row",
-        flexWrap: "wrap",
-        justifyContent: "space-between",
-        alignContent: "space-around",
-        alignItems: "center",
+        flex: 1,
         backgroundColor: "white",
         opacity: 0.9,
         borderTopLeftRadius: 20,
