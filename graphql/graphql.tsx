@@ -15,7 +15,14 @@ export type Scalars = {
   Float: number;
   /** Date custom scalar type */
   Date: any;
+  /** The `Upload` scalar type represents a file upload. */
   Upload: any;
+};
+
+export type AuthPayLoad = {
+  __typename?: 'AuthPayLoad';
+  token: Scalars['String'];
+  user: User;
 };
 
 export type Comment = {
@@ -52,21 +59,10 @@ export type File = {
   mimetype: Scalars['String'];
 };
 
-export type LoginResponse = {
-  __typename?: 'LoginResponse';
-  token?: Maybe<Scalars['String']>;
-  user?: Maybe<User>;
-};
-
-export type LoginUserInput = {
-  email: Scalars['String'];
-  password: Scalars['String'];
-};
-
 export type Mutation = {
   __typename?: 'Mutation';
   addDocument: Document;
-  assignProject?: Maybe<Scalars['Boolean']>;
+  assignUsers?: Maybe<Scalars['Boolean']>;
   createComment: Comment;
   createProject: Project;
   createProjectRole: ProjectRole;
@@ -76,8 +72,8 @@ export type Mutation = {
   deleteProject?: Maybe<Scalars['Boolean']>;
   deleteTask?: Maybe<Scalars['Boolean']>;
   deleteUser?: Maybe<Scalars['Boolean']>;
-  login: LoginResponse;
-  register: User;
+  login: AuthPayLoad;
+  register: AuthPayLoad;
   updateDocument: Document;
   updateProject: Project;
   updateTask: Task;
@@ -91,9 +87,9 @@ export type MutationAddDocumentArgs = {
 };
 
 
-export type MutationAssignProjectArgs = {
+export type MutationAssignUsersArgs = {
   projectId: Scalars['String'];
-  roleId: Scalars['String'];
+  usersRoles?: InputMaybe<Array<InputMaybe<UsersRoles>>>;
 };
 
 
@@ -103,6 +99,7 @@ export type MutationCreateCommentArgs = {
 
 
 export type MutationCreateProjectArgs = {
+  participantsInput?: InputMaybe<Array<InputMaybe<ParticipantsInput>>>;
   projectInput: ProjectInput;
 };
 
@@ -143,12 +140,12 @@ export type MutationDeleteUserArgs = {
 
 
 export type MutationLoginArgs = {
-  loginUserInput: LoginUserInput;
+  userLoginInput: UserLoginInput;
 };
 
 
 export type MutationRegisterArgs = {
-  userInput: UserInput;
+  userCreateInput: UserCreateInput;
 };
 
 
@@ -173,6 +170,11 @@ export type MutationUpdateUserArgs = {
   updateUserInput: UpdateUserInput;
 };
 
+export type ParticipantsInput = {
+  projectRoleId: Scalars['String'];
+  userId: Scalars['String'];
+};
+
 export enum Priority {
   High = 'HIGH',
   Low = 'LOW',
@@ -182,17 +184,21 @@ export enum Priority {
 export type Project = {
   __typename?: 'Project';
   client: Scalars['String'];
+  deleted: Scalars['Boolean'];
   description: Scalars['String'];
   endAt?: Maybe<Scalars['Date']>;
   id: Scalars['ID'];
   name: Scalars['String'];
+  participants?: Maybe<Array<Maybe<UserProject>>>;
   startAt?: Maybe<Scalars['Date']>;
+  tasks?: Maybe<Array<Maybe<Task>>>;
 };
 
 export type ProjectInput = {
   client: Scalars['String'];
   description: Scalars['String'];
   name: Scalars['String'];
+  userId?: InputMaybe<Scalars['String']>;
 };
 
 export type ProjectRole = {
@@ -312,14 +318,32 @@ export type User = {
   firstName: Scalars['String'];
   id: Scalars['ID'];
   lastName: Scalars['String'];
-  role?: Maybe<RoleSite>;
+  password: Scalars['String'];
+  role: RoleSite;
 };
 
-export type UserInput = {
+export type UserCreateInput = {
   email: Scalars['String'];
   firstName: Scalars['String'];
   lastName: Scalars['String'];
   password: Scalars['String'];
+  role?: InputMaybe<RoleSite>;
+};
+
+export type UserLoginInput = {
+  email: Scalars['String'];
+  password: Scalars['String'];
+};
+
+export type UserProject = {
+  __typename?: 'UserProject';
+  projectRole?: Maybe<ProjectRole>;
+  user?: Maybe<User>;
+};
+
+export type UsersRoles = {
+  roleId: Scalars['String'];
+  userId: Scalars['String'];
 };
 
 export type CreateProjectMutationVariables = Exact<{
@@ -340,14 +364,14 @@ export type UpdateProjectMutation = { __typename?: 'Mutation', updateProject: { 
 export type GetAllUsersQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetAllUsersQuery = { __typename?: 'Query', getAllUsers: Array<{ __typename?: 'User', id: string, email: string, lastName: string, firstName: string, role?: RoleSite | null | undefined }> };
+export type GetAllUsersQuery = { __typename?: 'Query', getAllUsers: Array<{ __typename?: 'User', id: string, email: string, lastName: string, firstName: string, role: RoleSite }> };
 
 export type GetUserQueryVariables = Exact<{
   userId: Scalars['String'];
 }>;
 
 
-export type GetUserQuery = { __typename?: 'Query', getUser: { __typename?: 'User', id: string, email: string, lastName: string, firstName: string, role?: RoleSite | null | undefined } };
+export type GetUserQuery = { __typename?: 'Query', getUser: { __typename?: 'User', id: string, email: string, lastName: string, firstName: string, role: RoleSite } };
 
 export type GetAllTasksQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -390,7 +414,7 @@ export type GetCommentsTaskQuery = { __typename?: 'Query', getCommentsByTask: Ar
 export type GetProjectsByUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetProjectsByUserQuery = { __typename?: 'Query', getProjectsByUser: Array<{ __typename?: 'Project', id: string, startAt?: any | null | undefined, endAt?: any | null | undefined, name: string, client: string, description: string } | null | undefined> };
+export type GetProjectsByUserQuery = { __typename?: 'Query', getProjectsByUser: Array<{ __typename?: 'Project', id: string, startAt?: any | null | undefined, endAt?: any | null | undefined, name: string, client: string, description: string, participants?: Array<{ __typename?: 'UserProject', user?: { __typename?: 'User', id: string, email: string, lastName: string, firstName: string, role: RoleSite } | null | undefined, projectRole?: { __typename?: 'ProjectRole', name: string } | null | undefined } | null | undefined> | null | undefined, tasks?: Array<{ __typename?: 'Task', name: string, status: Status } | null | undefined> | null | undefined } | null | undefined> };
 
 
 export const CreateProjectDocument = gql`
@@ -792,6 +816,22 @@ export const GetProjectsByUserDocument = gql`
     name
     client
     description
+    participants {
+      user {
+        id
+        email
+        lastName
+        firstName
+        role
+      }
+      projectRole {
+        name
+      }
+    }
+    tasks {
+      name
+      status
+    }
   }
 }
     `;

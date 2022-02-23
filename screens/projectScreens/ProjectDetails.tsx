@@ -3,7 +3,7 @@ import { RouteProp } from "@react-navigation/native";
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { FlatList } from "react-native-gesture-handler";
-import { Project, useGetTaskByProjectQuery } from "../../graphql/graphql";
+import { Project } from "../../graphql/graphql";
 
 export default function ProjectDetails({
   route,
@@ -11,9 +11,6 @@ export default function ProjectDetails({
   route: RouteProp<{ params: { project: Project } }, "params">;
 }): JSX.Element {
   const { project } = route.params;
-  const { data: tasks, loading } = useGetTaskByProjectQuery({
-    variables: { projectId: project.id },
-  });
   return (
     <View style={styles.container}>
       <View style={styles.header} />
@@ -45,23 +42,28 @@ export default function ProjectDetails({
       </View>
       <View style={styles.section}>
         <Text style={styles.title}>Personnes associées</Text>
-        <View style={styles.workers}>
-          {/*TODO horizontal flat list*/}
-          <View style={styles.worker}></View>
-          <View style={styles.worker}></View>
-          <View style={styles.worker}></View>
-          <View style={styles.worker}></View>
-          <View style={styles.worker}></View>
-        </View>
+        <FlatList
+          horizontal={true}
+          data={project.participants}
+          renderItem={(user) => (
+            <View style={styles.worker}>
+              <Text>{user.item?.user?.firstName}</Text>
+            </View>
+          )}
+          ListEmptyComponent={() => <Text>Pas encore de participants</Text>}
+          keyExtractor={(user) => user.id}
+        />
+        <View style={styles.workers}></View>
       </View>
 
       <View style={styles.section}>
         <Text style={styles.title}>Tâches associées</Text>
         <FlatList
-          data={tasks?.getTaskByProject}
+          data={project?.tasks}
           renderItem={(task) => <Text>{task.item.name}</Text>}
           ListEmptyComponent={() => <Text>Acunes tâches pour le moment</Text>}
           refreshing={loading}
+          keyExtractor={(task) => task.id}
         />
       </View>
     </View>
