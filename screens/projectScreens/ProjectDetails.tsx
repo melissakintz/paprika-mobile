@@ -51,7 +51,7 @@ export default function ProjectDetails({
             </View>
           )}
           ListEmptyComponent={() => <Text>Pas encore de participants</Text>}
-          keyExtractor={(user) => user.id}
+          keyExtractor={(user, index) => user.id || index}
         />
         <View style={styles.workers}></View>
       </View>
@@ -62,7 +62,7 @@ export default function ProjectDetails({
           data={project.tasks}
           renderItem={(task) => <TaskCard task={task.item} />}
           ListEmptyComponent={() => <Text>Acunes tâches pour le moment</Text>}
-          keyExtractor={(task) => task.id}
+          keyExtractor={(task, index) => task.id || index}
         />
       </View>
     </View>
@@ -130,13 +130,10 @@ const moreThanNow = (date: string): boolean => {
 
 const styles = StyleSheet.create({
   container: {
-    margin: 10,
     alignSelf: "center",
     width: "100%",
     backgroundColor: "white",
     padding: 20,
-    borderRadius: 25,
-    height: "97%",
   },
   client: {
     color: "gray",
@@ -172,10 +169,11 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   worker: {
-    width: 40,
-    height: 40,
+    width: 45,
+    height: 45,
     borderRadius: 100,
     backgroundColor: "orange",
+    justifyContent: "center",
   },
   section: {
     marginVertical: 10,
