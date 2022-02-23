@@ -1,5 +1,5 @@
-import { gql } from '@apollo/client';
 import * as Apollo from '@apollo/client';
+import { gql } from '@apollo/client';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -15,7 +15,14 @@ export type Scalars = {
   Float: number;
   /** Date custom scalar type */
   Date: any;
+  /** The `Upload` scalar type represents a file upload. */
   Upload: any;
+};
+
+export type AuthPayLoad = {
+  __typename?: 'AuthPayLoad';
+  token: Scalars['String'];
+  user: User;
 };
 
 export type Comment = {
@@ -52,20 +59,10 @@ export type File = {
   mimetype: Scalars['String'];
 };
 
-export type LoginResponse = {
-  __typename?: 'LoginResponse';
-  token?: Maybe<Scalars['String']>;
-  user?: Maybe<User>;
-};
-
-export type LoginUserInput = {
-  email: Scalars['String'];
-  password: Scalars['String'];
-};
-
 export type Mutation = {
   __typename?: 'Mutation';
   addDocument: Document;
+  assignUsers?: Maybe<Scalars['Boolean']>;
   assignProject?: Maybe<Scalars['Boolean']>;
   createComment: Comment;
   createProject: Project;
@@ -76,8 +73,8 @@ export type Mutation = {
   deleteProject?: Maybe<Scalars['Boolean']>;
   deleteTask?: Maybe<Scalars['Boolean']>;
   deleteUser?: Maybe<Scalars['Boolean']>;
-  login: LoginResponse;
-  register: User;
+  login: AuthPayLoad;
+  register: AuthPayLoad;
   updateDocument: Document;
   updateProject: Project;
   updateTask: Task;
@@ -143,12 +140,12 @@ export type MutationDeleteUserArgs = {
 
 
 export type MutationLoginArgs = {
-  loginUserInput: LoginUserInput;
+  userLoginInput: UserLoginInput;
 };
 
 
 export type MutationRegisterArgs = {
-  userInput: UserInput;
+  userCreateInput: UserCreateInput;
 };
 
 
@@ -312,14 +309,26 @@ export type User = {
   firstName: Scalars['String'];
   id: Scalars['ID'];
   lastName: Scalars['String'];
+  password: Scalars['String'];
   role?: Maybe<RoleSite>;
 };
 
-export type UserInput = {
+export type UserCreateInput = {
   email: Scalars['String'];
   firstName: Scalars['String'];
   lastName: Scalars['String'];
   password: Scalars['String'];
+  role?: InputMaybe<RoleSite>;
+};
+
+export type UserLoginInput = {
+  email: Scalars['String'];
+  password: Scalars['String'];
+};
+
+export type UsersRoles = {
+  roleId: Scalars['String'];
+  userId: Scalars['String'];
 };
 
 export type CreateProjectMutationVariables = Exact<{
@@ -337,10 +346,17 @@ export type UpdateProjectMutationVariables = Exact<{
 
 export type UpdateProjectMutation = { __typename?: 'Mutation', updateProject: { __typename?: 'Project', id: string, name: string, client: string, description: string } };
 
+export type LoginMutationVariables = Exact<{
+  userLoginInput: UserLoginInput;
+}>;
+
+
+export type LoginMutation = { __typename?: 'Mutation', login: { __typename?: 'AuthPayLoad', token: string, user: { __typename?: 'User', id: string, email: string, lastName: string, firstName: string, role?: RoleSite | null | undefined } } };
+
 export type GetAllUsersQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetAllUsersQuery = { __typename?: 'Query', getAllUsers: Array<{ __typename?: 'User', id: string, email: string, lastName: string, firstName: string, role?: RoleSite | null | undefined }> };
+export type GetAllUsersQuery = { __typename?: 'Query', getAllUsers: Array<{ __typename?: 'User', id: string, email: string, lastName: string, firstName: string, role?: RoleSite | null | undefined, password: string }> };
 
 export type GetUserQueryVariables = Exact<{
   userId: Scalars['String'];
@@ -466,6 +482,46 @@ export function useUpdateProjectMutation(baseOptions?: Apollo.MutationHookOption
 export type UpdateProjectMutationHookResult = ReturnType<typeof useUpdateProjectMutation>;
 export type UpdateProjectMutationResult = Apollo.MutationResult<UpdateProjectMutation>;
 export type UpdateProjectMutationOptions = Apollo.BaseMutationOptions<UpdateProjectMutation, UpdateProjectMutationVariables>;
+export const LoginDocument = gql`
+    mutation login($userLoginInput: UserLoginInput!) {
+  login(userLoginInput: $userLoginInput) {
+    token
+    user {
+      id
+      email
+      lastName
+      firstName
+      role
+    }
+  }
+}
+    `;
+export type LoginMutationFn = Apollo.MutationFunction<LoginMutation, LoginMutationVariables>;
+
+/**
+ * __useLoginMutation__
+ *
+ * To run a mutation, you first call `useLoginMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useLoginMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [loginMutation, { data, loading, error }] = useLoginMutation({
+ *   variables: {
+ *      userLoginInput: // value for 'userLoginInput'
+ *   },
+ * });
+ */
+export function useLoginMutation(baseOptions?: Apollo.MutationHookOptions<LoginMutation, LoginMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<LoginMutation, LoginMutationVariables>(LoginDocument, options);
+      }
+export type LoginMutationHookResult = ReturnType<typeof useLoginMutation>;
+export type LoginMutationResult = Apollo.MutationResult<LoginMutation>;
+export type LoginMutationOptions = Apollo.BaseMutationOptions<LoginMutation, LoginMutationVariables>;
 export const GetAllUsersDocument = gql`
     query getAllUsers {
   getAllUsers {
@@ -474,6 +530,7 @@ export const GetAllUsersDocument = gql`
     lastName
     firstName
     role
+    password
   }
 }
     `;
