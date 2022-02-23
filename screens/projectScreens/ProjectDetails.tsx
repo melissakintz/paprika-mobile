@@ -1,9 +1,9 @@
 import { Ionicons } from "@expo/vector-icons";
-import { RouteProp } from "@react-navigation/native";
+import { RouteProp, useNavigation } from "@react-navigation/native";
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
-import { FlatList } from "react-native-gesture-handler";
-import { Project } from "../../graphql/graphql";
+import { FlatList, TouchableOpacity } from "react-native-gesture-handler";
+import { Project, Task } from "../../graphql/graphql";
 
 export default function ProjectDetails({
   route,
@@ -59,16 +59,62 @@ export default function ProjectDetails({
       <View style={styles.section}>
         <Text style={styles.title}>Tâches associées</Text>
         <FlatList
-          data={project?.tasks}
-          renderItem={(task) => <Text>{task.item.name}</Text>}
+          data={project.tasks}
+          renderItem={(task) => <TaskCard task={task.item} />}
           ListEmptyComponent={() => <Text>Acunes tâches pour le moment</Text>}
-          refreshing={loading}
           keyExtractor={(task) => task.id}
         />
       </View>
     </View>
   );
 }
+const TaskCard = ({ task }: { task: Task }) => {
+  const navigation = useNavigation();
+  return (
+    <TouchableOpacity
+      style={styles.taskContainer}
+      onPress={() =>
+        navigation.navigate("Tâches", {
+          screen: "OneTaskScreen",
+          params: { task: task },
+        })
+      }
+    >
+      <View style={styles.taskContainer}>
+        <View
+          style={[
+            styles.taskHeader,
+            {
+              backgroundColor:
+                task.status === "OPEN"
+                  ? "lightgray"
+                  : task.status === "INPROGRESS"
+                  ? "orange"
+                  : "green",
+            },
+          ]}
+        />
+        <Text style={styles.taskText}>{task.name}</Text>
+      </View>
+
+      <View
+        style={[
+          styles.taskBadge,
+          {
+            backgroundColor:
+              task.status === "OPEN"
+                ? "lightgray"
+                : task.status === "INPROGRESS"
+                ? "orange"
+                : "green",
+          },
+        ]}
+      >
+        <Text>{task.status}</Text>
+      </View>
+    </TouchableOpacity>
+  );
+};
 
 const toLocaleDate = (date: string): string => {
   const formatedDate = new Date(date);
@@ -133,5 +179,25 @@ const styles = StyleSheet.create({
   },
   section: {
     marginVertical: 10,
+  },
+  taskContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    padding: 10,
+    justifyContent: "space-between",
+  },
+  taskHeader: {
+    height: 20,
+    width: 3,
+  },
+  taskText: {
+    fontSize: 20,
+    paddingLeft: 10,
+  },
+  taskBadge: {
+    fontSize: 20,
+    padding: 4,
+    borderRadius: 5,
+    alignSelf: "flex-end",
   },
 });

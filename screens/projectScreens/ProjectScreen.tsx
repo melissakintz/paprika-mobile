@@ -1,5 +1,4 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { useNavigation } from "@react-navigation/native";
 import React from "react";
 import {
   FlatList,
@@ -38,6 +37,7 @@ export default function ProjectScreen({
         refreshing={loading}
         onEndReached={() => fetchMore}
         initialNumToRender={5}
+        keyExtractor={(project) => project.id}
       />
     </View>
   );
