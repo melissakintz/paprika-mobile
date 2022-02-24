@@ -62,7 +62,7 @@ export type File = {
 export type Mutation = {
   __typename?: 'Mutation';
   addDocument: Document;
-  assignUsers?: Maybe<Scalars['Boolean']>;
+  assignUsersToProject?: Maybe<Scalars['Boolean']>;
   createComment: Comment;
   createProject: Project;
   createProjectRole: ProjectRole;
@@ -87,7 +87,7 @@ export type MutationAddDocumentArgs = {
 };
 
 
-export type MutationAssignUsersArgs = {
+export type MutationAssignUsersToProjectArgs = {
   projectId: Scalars['String'];
   usersRoles?: InputMaybe<Array<InputMaybe<UsersRoles>>>;
 };
@@ -156,6 +156,7 @@ export type MutationUpdateDocumentArgs = {
 
 
 export type MutationUpdateProjectArgs = {
+  participantsInput?: InputMaybe<Array<InputMaybe<ParticipantsInput>>>;
   projectId: Scalars['String'];
   updateProjectInput: UpdateProjectInput;
 };
