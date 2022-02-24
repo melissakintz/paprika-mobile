@@ -62,8 +62,7 @@ export type File = {
 export type Mutation = {
   __typename?: 'Mutation';
   addDocument: Document;
-  assignUsers?: Maybe<Scalars['Boolean']>;
-  assignProject?: Maybe<Scalars['Boolean']>;
+  assignUsersToProject?: Maybe<Scalars['Boolean']>;
   createComment: Comment;
   createProject: Project;
   createProjectRole: ProjectRole;
@@ -88,9 +87,9 @@ export type MutationAddDocumentArgs = {
 };
 
 
-export type MutationAssignProjectArgs = {
+export type MutationAssignUsersToProjectArgs = {
   projectId: Scalars['String'];
-  roleId: Scalars['String'];
+  usersRoles?: InputMaybe<Array<InputMaybe<UsersRoles>>>;
 };
 
 
@@ -100,6 +99,7 @@ export type MutationCreateCommentArgs = {
 
 
 export type MutationCreateProjectArgs = {
+  participantsInput?: InputMaybe<Array<InputMaybe<ParticipantsInput>>>;
   projectInput: ProjectInput;
 };
 
@@ -156,6 +156,7 @@ export type MutationUpdateDocumentArgs = {
 
 
 export type MutationUpdateProjectArgs = {
+  participantsInput?: InputMaybe<Array<InputMaybe<ParticipantsInput>>>;
   projectId: Scalars['String'];
   updateProjectInput: UpdateProjectInput;
 };
@@ -170,6 +171,11 @@ export type MutationUpdateUserArgs = {
   updateUserInput: UpdateUserInput;
 };
 
+export type ParticipantsInput = {
+  projectRoleId: Scalars['String'];
+  userId: Scalars['String'];
+};
+
 export enum Priority {
   High = 'HIGH',
   Low = 'LOW',
@@ -179,17 +185,21 @@ export enum Priority {
 export type Project = {
   __typename?: 'Project';
   client: Scalars['String'];
+  deleted: Scalars['Boolean'];
   description: Scalars['String'];
   endAt?: Maybe<Scalars['Date']>;
   id: Scalars['ID'];
   name: Scalars['String'];
+  participants?: Maybe<Array<Maybe<UserProject>>>;
   startAt?: Maybe<Scalars['Date']>;
+  tasks?: Maybe<Array<Maybe<Task>>>;
 };
 
 export type ProjectInput = {
   client: Scalars['String'];
   description: Scalars['String'];
   name: Scalars['String'];
+  userId?: InputMaybe<Scalars['String']>;
 };
 
 export type ProjectRole = {
@@ -310,7 +320,7 @@ export type User = {
   id: Scalars['ID'];
   lastName: Scalars['String'];
   password: Scalars['String'];
-  role?: Maybe<RoleSite>;
+  role: RoleSite;
 };
 
 export type UserCreateInput = {
@@ -324,6 +334,12 @@ export type UserCreateInput = {
 export type UserLoginInput = {
   email: Scalars['String'];
   password: Scalars['String'];
+};
+
+export type UserProject = {
+  __typename?: 'UserProject';
+  projectRole?: Maybe<ProjectRole>;
+  user?: Maybe<User>;
 };
 
 export type UsersRoles = {
@@ -356,14 +372,15 @@ export type LoginMutation = { __typename?: 'Mutation', login: { __typename?: 'Au
 export type GetAllUsersQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetAllUsersQuery = { __typename?: 'Query', getAllUsers: Array<{ __typename?: 'User', id: string, email: string, lastName: string, firstName: string, role?: RoleSite | null | undefined, password: string }> };
+export type GetAllUsersQuery = { __typename?: 'Query', getAllUsers: Array<{ __typename?: 'User', id: string, email: string, lastName: string, firstName: string, role: RoleSite }> };
+
 
 export type GetUserQueryVariables = Exact<{
   userId: Scalars['String'];
 }>;
 
 
-export type GetUserQuery = { __typename?: 'Query', getUser: { __typename?: 'User', id: string, email: string, lastName: string, firstName: string, role?: RoleSite | null | undefined } };
+export type GetUserQuery = { __typename?: 'Query', getUser: { __typename?: 'User', id: string, email: string, lastName: string, firstName: string, role: RoleSite } };
 
 export type GetAllTasksQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -406,7 +423,7 @@ export type GetCommentsTaskQuery = { __typename?: 'Query', getCommentsByTask: Ar
 export type GetProjectsByUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetProjectsByUserQuery = { __typename?: 'Query', getProjectsByUser: Array<{ __typename?: 'Project', id: string, startAt?: any | null | undefined, endAt?: any | null | undefined, name: string, client: string, description: string } | null | undefined> };
+export type GetProjectsByUserQuery = { __typename?: 'Query', getProjectsByUser: Array<{ __typename?: 'Project', id: string, startAt?: any | null | undefined, endAt?: any | null | undefined, name: string, client: string, description: string, participants?: Array<{ __typename?: 'UserProject', user?: { __typename?: 'User', id: string, email: string, lastName: string, firstName: string, role: RoleSite } | null | undefined, projectRole?: { __typename?: 'ProjectRole', name: string } | null | undefined } | null | undefined> | null | undefined, tasks?: Array<{ __typename?: 'Task', name: string, status: Status } | null | undefined> | null | undefined } | null | undefined> };
 
 
 export const CreateProjectDocument = gql`
@@ -849,6 +866,22 @@ export const GetProjectsByUserDocument = gql`
     name
     client
     description
+    participants {
+      user {
+        id
+        email
+        lastName
+        firstName
+        role
+      }
+      projectRole {
+        name
+      }
+    }
+    tasks {
+      name
+      status
+    }
   }
 }
     `;
