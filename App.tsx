@@ -23,7 +23,7 @@ const link = new HttpLink({ uri: "http://192.168.1.88:4000/graphql" });
 
 // Initialize Apollo Client
 const client = new ApolloClient({
-  link,
+  uri: "http://192.168.1.21:4000/graphql",
   cache: new InMemoryCache(),
 });
 
