@@ -19,22 +19,7 @@ export default function EmailCurrent() {
   )
 }
 
-
 const styles = StyleSheet.create({
-    containerBig: {
-      backgroundColor: "white",
-      flex: 1,
-      padding: 20
-    },
-    container: {
-      backgroundColor: "#e6dcdc",
-      justifyContent: "space-between",
-      borderRadius: 5,
-      borderBottomColor: "black",
-      borderBottomWidth: 1,
-      borderRightColor: "black",
-      borderRightWidth: 1
-    },
     containerList: {
       display: "flex",
       flexDirection: "row",
@@ -48,14 +33,6 @@ const styles = StyleSheet.create({
     textAlignRight: {
       textAlign: "right",
       justifyContent: "flex-end"
-    },
-    containerTask: {
-      paddingTop: 30
-    },
-    textCenter: {
-      textAlign: "center",
-      textDecorationLine: "underline",
-      paddingBottom: 20,
     },
     textSize: {
       fontSize: 20

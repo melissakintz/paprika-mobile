@@ -19,48 +19,25 @@ export default function RoleCurrent() {
   )
 }
 
-
 const styles = StyleSheet.create({
-    containerBig: {
-      backgroundColor: "white",
-      flex: 1,
-      padding: 20
-    },
-    container: {
-      backgroundColor: "#e6dcdc",
-      justifyContent: "space-between",
-      borderRadius: 5,
-      borderBottomColor: "black",
-      borderBottomWidth: 1,
-      borderRightColor: "black",
-      borderRightWidth: 1
-    },
-    containerList: {
-      display: "flex",
-      flexDirection: "row",
-      justifyContent: "space-between",
-      padding: 10
-    },
-    textAlignLeft: {
-      textAlign: "left",
-      justifyContent: "flex-start"
-    },
-    textAlignRight: {
-      textAlign: "right",
-      justifyContent: "flex-end"
-    },
-    containerTask: {
-      paddingTop: 30
-    },
-    textCenter: {
-      textAlign: "center",
-      textDecorationLine: "underline",
-      paddingBottom: 20,
-    },
-    textSize: {
-      fontSize: 20
-    },
-    textUnderline: {
-      textDecorationLine: "underline",
-    }
-  });
+  containerList: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    padding: 10
+  },
+  textAlignLeft: {
+    textAlign: "left",
+    justifyContent: "flex-start"
+  },
+  textAlignRight: {
+    textAlign: "right",
+    justifyContent: "flex-end"
+  },
+  textSize: {
+    fontSize: 20
+  },
+  textUnderline: {
+    textDecorationLine: "underline",
+  }
+});
