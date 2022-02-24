@@ -134,6 +134,7 @@ const styles = StyleSheet.create({
     width: "100%",
     backgroundColor: "white",
     padding: 20,
+    marginVertical: 10,
   },
   client: {
     color: "gray",
@@ -181,7 +182,7 @@ const styles = StyleSheet.create({
   taskContainer: {
     flexDirection: "row",
     alignItems: "center",
-    padding: 10,
+    padding: 5,
     justifyContent: "space-between",
   },
   taskHeader: {
