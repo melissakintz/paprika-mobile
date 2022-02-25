@@ -19,7 +19,7 @@ import OneTaskScreen from "./screens/taskScreens/OneTaskScreen";
 import TaskScreen from "./screens/taskScreens/TaskScreen";
 import store from "./store";
 
-const link = new HttpLink({ uri: "http://192.168.122.1:4000/graphql" });
+const link = new HttpLink({ uri: "http://192.168.1.11:4000/graphql" });
 
 // Initialize Apollo Client
 const client = new ApolloClient({
