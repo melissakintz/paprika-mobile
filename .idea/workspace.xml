@@ -4,7 +4,11 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="892c4244-580a-40fa-81a6-91ac0f89d581" name="Default Changelist" comment="" />
+    <list default="true" id="892c4244-580a-40fa-81a6-91ac0f89d581" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/App.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/App.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/graphql/graphql.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/graphql/graphql.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/screens/taskScreens/OneTaskScreen.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/screens/taskScreens/OneTaskScreen.tsx" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />

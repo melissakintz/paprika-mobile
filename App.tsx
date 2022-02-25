@@ -23,7 +23,7 @@ import { setContext } from "@apollo/client/link/context";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 
-const link = new HttpLink({ uri: "http://192.168.1.21:4000/graphql" });
+const link = new HttpLink({ uri: "http://192.168.1.11:4000/graphql" });
 
 const authLink = setContext(async (_, { headers }) => {
   const userId = await AsyncStorage.getItem("userId");
@@ -56,7 +56,7 @@ const TabNavigator = () => {
             iconName = focused ? "briefcase" : "briefcase-outline";
           } else if (route.name === "Accueil") {
             iconName = focused ? "fast-food" : "fast-food-outline";
-          } else if (route.name === "Tâches") {
+          } else if (route.name === "Taches") {
             iconName = focused
               ? "checkmark-circle"
               : "checkmark-circle-outline";
@@ -72,7 +72,7 @@ const TabNavigator = () => {
     >
       <Tab.Screen name="Projets" component={ProjectStack} />
       <Tab.Screen name="Accueil" component={HomeStack} />
-      <Tab.Screen name="Tâches" component={TaskStack} />
+      <Tab.Screen name="Taches" component={TaskStack} />
     </Tab.Navigator>
   );
 };

@@ -74,7 +74,7 @@ const TaskCard = ({ task }: { task: Task }) => {
     <TouchableOpacity
       style={styles.taskContainer}
       onPress={() =>
-        navigation.navigate("Tâches", {
+        navigation.navigate("Taches", {
           screen: "OneTaskScreen",
           params: { task: task },
         })
