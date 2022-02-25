@@ -2,7 +2,7 @@ import {
   ApolloClient,
   ApolloProvider,
   HttpLink,
-  InMemoryCache
+  InMemoryCache,
 } from "@apollo/client";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
@@ -13,21 +13,34 @@ import { AppRegistry } from "react-native";
 import { Provider, RootStateOrAny, useSelector } from "react-redux";
 import HomeScreen from "./screens/HomeScreen";
 import LoginScreen from "./screens/LoginScreen";
+import ProfilScreen from "./screens/profilScreens/ProfilScreen";
 import ProjectDetails from "./screens/projectScreens/ProjectDetails";
 import ProjectScreen from "./screens/projectScreens/ProjectScreen";
 import OneTaskScreen from "./screens/taskScreens/OneTaskScreen";
 import TaskScreen from "./screens/taskScreens/TaskScreen";
-import ProfilScreen from "./screens/profilScreens/ProfilScreen";
 import store from "./store";
+import { setContext } from "@apollo/client/link/context";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const link = new HttpLink({ uri: "http://192.168.1.88:4000/graphql" });
+
+const link = new HttpLink({ uri: "http://192.168.1.21:4000/graphql" });
+
+const authLink = setContext(async (_, { headers }) => {
+  const userId = await AsyncStorage.getItem("userId");
+  return {
+    headers: {
+      ...headers,
+      authorization:
+        userId !== null || userId !== undefined ? userId : undefined,
+    },
+  };
+});
 
 // Initialize Apollo Client
 const client = new ApolloClient({
-  uri: "http://192.168.1.21:4000/graphql",
+  link: authLink.concat(link),
   cache: new InMemoryCache(),
 });
-
 const Stack = createStackNavigator();
 
 const Tab = createBottomTabNavigator();

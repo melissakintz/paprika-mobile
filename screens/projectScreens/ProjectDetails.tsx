@@ -1,9 +1,9 @@
 import { Ionicons } from "@expo/vector-icons";
-import { RouteProp } from "@react-navigation/native";
+import { RouteProp, useNavigation } from "@react-navigation/native";
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
-import { FlatList } from "react-native-gesture-handler";
-import { Project, useGetTaskByProjectQuery } from "../../graphql/graphql";
+import { FlatList, TouchableOpacity } from "react-native-gesture-handler";
+import { Project, Task } from "../../graphql/graphql";
 
 export default function ProjectDetails({
   route,
@@ -11,9 +11,6 @@ export default function ProjectDetails({
   route: RouteProp<{ params: { project: Project } }, "params">;
 }): JSX.Element {
   const { project } = route.params;
-  const { data: tasks, loading } = useGetTaskByProjectQuery({
-    variables: { projectId: project.id },
-  });
   return (
     <View style={styles.container}>
       <View style={styles.header} />
@@ -45,28 +42,79 @@ export default function ProjectDetails({
       </View>
       <View style={styles.section}>
         <Text style={styles.title}>Personnes associées</Text>
-        <View style={styles.workers}>
-          {/*TODO horizontal flat list*/}
-          <View style={styles.worker}></View>
-          <View style={styles.worker}></View>
-          <View style={styles.worker}></View>
-          <View style={styles.worker}></View>
-          <View style={styles.worker}></View>
-        </View>
+        <FlatList
+          horizontal={true}
+          data={project.participants}
+          renderItem={(user) => (
+            <View style={styles.worker}>
+              <Text>{user.item?.user?.firstName}</Text>
+            </View>
+          )}
+          ListEmptyComponent={() => <Text>Pas encore de participants</Text>}
+          keyExtractor={(user, index) => user.id || index}
+        />
+        <View style={styles.workers}></View>
       </View>
 
       <View style={styles.section}>
         <Text style={styles.title}>Tâches associées</Text>
         <FlatList
-          data={tasks?.getTaskByProject}
-          renderItem={(task) => <Text>{task.item.name}</Text>}
+          data={project.tasks}
+          renderItem={(task) => <TaskCard task={task.item} />}
           ListEmptyComponent={() => <Text>Acunes tâches pour le moment</Text>}
-          refreshing={loading}
+          keyExtractor={(task, index) => task.id || index}
         />
       </View>
     </View>
   );
 }
+const TaskCard = ({ task }: { task: Task }) => {
+  const navigation = useNavigation();
+  return (
+    <TouchableOpacity
+      style={styles.taskContainer}
+      onPress={() =>
+        navigation.navigate("Tâches", {
+          screen: "OneTaskScreen",
+          params: { task: task },
+        })
+      }
+    >
+      <View style={styles.taskContainer}>
+        <View
+          style={[
+            styles.taskHeader,
+            {
+              backgroundColor:
+                task.status === "OPEN"
+                  ? "lightgray"
+                  : task.status === "INPROGRESS"
+                  ? "orange"
+                  : "green",
+            },
+          ]}
+        />
+        <Text style={styles.taskText}>{task.name}</Text>
+      </View>
+
+      <View
+        style={[
+          styles.taskBadge,
+          {
+            backgroundColor:
+              task.status === "OPEN"
+                ? "lightgray"
+                : task.status === "INPROGRESS"
+                ? "orange"
+                : "green",
+          },
+        ]}
+      >
+        <Text>{task.status}</Text>
+      </View>
+    </TouchableOpacity>
+  );
+};
 
 const toLocaleDate = (date: string): string => {
   const formatedDate = new Date(date);
@@ -82,13 +130,11 @@ const moreThanNow = (date: string): boolean => {
 
 const styles = StyleSheet.create({
   container: {
-    margin: 10,
     alignSelf: "center",
     width: "100%",
     backgroundColor: "white",
     padding: 20,
-    borderRadius: 25,
-    height: "97%",
+    marginVertical: 10,
   },
   client: {
     color: "gray",
@@ -124,12 +170,33 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   worker: {
-    width: 40,
-    height: 40,
+    width: 45,
+    height: 45,
     borderRadius: 100,
     backgroundColor: "orange",
+    justifyContent: "center",
   },
   section: {
     marginVertical: 10,
+  },
+  taskContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    padding: 5,
+    justifyContent: "space-between",
+  },
+  taskHeader: {
+    height: 20,
+    width: 3,
+  },
+  taskText: {
+    fontSize: 20,
+    paddingLeft: 10,
+  },
+  taskBadge: {
+    fontSize: 20,
+    padding: 4,
+    borderRadius: 5,
+    alignSelf: "flex-end",
   },
 });

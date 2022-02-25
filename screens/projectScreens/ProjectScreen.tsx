@@ -37,6 +37,7 @@ export default function ProjectScreen({
         refreshing={loading}
         onEndReached={() => fetchMore}
         initialNumToRender={5}
+        keyExtractor={(project) => project.id}
       />
     </View>
   );
