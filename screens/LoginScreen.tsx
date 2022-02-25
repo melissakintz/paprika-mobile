@@ -1,26 +1,33 @@
-import React, { useState } from 'react';
-import { Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import { useDispatch } from 'react-redux';
-import { useGetAllUsersQuery } from '../graphql/graphql';
-import { loggedIn } from '../Redux/login';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import React, { useState } from "react";
+import {
+  Image,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { useDispatch } from "react-redux";
+import { useLoginMutation } from "../graphql/graphql";
+import { loggedIn } from "../Redux/login";
+import { setUser } from "../Redux/user";
 
 export default function LoginScreen() {
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
   const [incorrectStyle, setIncorrectStyle] = useState(false);
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-  const { data: user } = useGetAllUsersQuery();
-  const allUsers = user?.getAllUsers;
-  function login() {
-    if (allUsers !== undefined) {
-      allUsers.forEach( user => {
-        if (email === user.email && password === "paprika") {
-          dispatch(loggedIn());
-        } else {
-          setIncorrectStyle(true);
-        }
-      });
+  const [mutationLogin, { data: user }] = useLoginMutation();
+  async function login() {
+    await mutationLogin({ variables: { userLoginInput: { email, password } } });
+    if (user?.login.token) {
+      dispatch(loggedIn());
+      dispatch(setUser(user.login.user));
+      await AsyncStorage.setItem("userId", user.login.user.id);
+    } else {
+      setIncorrectStyle(true);
     }
   }
 
@@ -46,15 +53,14 @@ export default function LoginScreen() {
           onChangeText={(password) => setPassword(password)}
         />
       </View>
-      <Text style={incorrectStyle ? styles.incorrect : styles.hide}>Email ou mot de passe incorrect.</Text>
+      <Text style={incorrectStyle ? styles.incorrect : styles.hide}>
+        Email ou mot de passe incorrect.
+      </Text>
       <TouchableOpacity>
         <Text style={styles.forgot_button}>Mot de passe oublié?</Text>
       </TouchableOpacity>
-      <TouchableOpacity 
-        style={styles.loginBtn}
-        onPress={login}
-      >
-        <Text style={{ color: '#F2F2F2' }}>Connexion</Text>
+      <TouchableOpacity style={styles.loginBtn} onPress={login}>
+        <Text style={{ color: "#F2F2F2" }}>Connexion</Text>
       </TouchableOpacity>
     </View>
   );
@@ -63,12 +69,12 @@ export default function LoginScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#C9BFBF',
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: "#C9BFBF",
+    alignItems: "center",
+    justifyContent: "center",
   },
   image: {
-    marginBottom: 40
+    marginBottom: 40,
   },
   inputView: {
     backgroundColor: "#F2F2F2",
@@ -83,15 +89,15 @@ const styles = StyleSheet.create({
     height: 50,
     flex: 1,
     padding: 10,
-    paddingLeft: 20
+    paddingLeft: 20,
   },
   forgot_button: {
     height: 30,
     marginBottom: 10,
   },
   incorrect: {
-    color: '#E33636',
-    fontWeight: 'bold',
+    color: "#E33636",
+    fontWeight: "bold",
     height: 30,
     marginBottom: 10,
   },
@@ -105,6 +111,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#E33636",
   },
   hide: {
-    display: 'none'
-  }
+    display: "none",
+  },
 });
