@@ -6,30 +6,28 @@ import {
 } from "@apollo/client";
 import { setContext } from "@apollo/client/link/context";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import AsyncStorage, {
-  useAsyncStorage,
-} from "@react-native-async-storage/async-storage";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { NavigationContainer, useNavigation } from "@react-navigation/native";
+import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { AppRegistry } from "react-native";
-import { Provider, RootStateOrAny, useSelector } from "react-redux";
+import { Provider } from "react-redux";
+import { User } from "./graphql/graphql";
 import HomeStack from "./screens/navigation/HomeStack";
 import LoginStack from "./screens/navigation/LoginStack";
 import ProjectStack from "./screens/navigation/ProjectStack";
 import TaskStack from "./screens/navigation/TaskStack";
 import store from "./store";
+import getUser from "./utils/userUtils";
 
 const link = new HttpLink({ uri: "http://192.168.1.25:4000/graphql" });
 
 const authLink = setContext(async (_, { headers }) => {
-  const userId = await AsyncStorage.getItem("userId");
+  const user: User | null = await getUser();
   return {
     headers: {
       ...headers,
-      authorization:
-        userId !== null || userId !== undefined ? userId : undefined,
+      authorization: user ? user.id : undefined,
     },
   };
 });

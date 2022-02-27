@@ -12,8 +12,8 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import {Calendar, CalendarList, Agenda} from 'react-native-calendars';
 import { Appbar } from 'react-native-paper';
 
-import { useGetAllProjectsLazyQuery, useGetAllProjectsQuery, useGetAllUsersQuery, useGetUserQuery } from "../../graphql/graphql";
-import { useGetAllTasksLazyQuery, useGetAllTasksQuery } from "../../graphql/graphql";
+import { useGetAllProjectsLazyQuery, useGetAllProjectsQuery, useGetAllUsersQuery, useGetUserQuery } from "../../../graphql/graphql";
+import { useGetAllTasksLazyQuery, useGetAllTasksQuery } from "../../../graphql/graphql";
 import { useDispatch } from 'react-redux';
 
 export default function HelpCard() {

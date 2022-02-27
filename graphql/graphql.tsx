@@ -438,7 +438,12 @@ export type GetCommentsTaskQuery = { __typename?: 'Query', getCommentsByTask: Ar
 export type GetProjectsByUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetProjectsByUserQuery = { __typename?: 'Query', getProjectsByUser: Array<{ __typename?: 'Project', id: string, startAt?: any | null | undefined, endAt?: any | null | undefined, name: string, client: string, description: string, participants?: Array<{ __typename?: 'UserProject', user?: { __typename?: 'User', id: string, email: string, lastName: string, firstName: string, role: RoleSite } | null | undefined, projectRole?: { __typename?: 'ProjectRole', name: string } | null | undefined } | null | undefined> | null | undefined, tasks?: Array<{ __typename?: 'Task', id: string, name: string, status: Status, description: string, priority: Priority, projectId: string, timing?: string | null | undefined, users?: Array<{ __typename?: 'User', id: string, email: string, lastName: string, firstName: string, role: RoleSite } | null | undefined> | null | undefined } | null | undefined> | null | undefined } | null | undefined> };
+export type GetProjectsByUserQuery = { __typename?: 'Query', getProjectsByUser: Array<{ __typename?: 'Project', id: string, startAt?: any | null | undefined, endAt?: any | null | undefined, name: string, client: string, description: string, participants?: Array<{ __typename?: 'UserProject', user?: { __typename?: 'User', id: string, email: string, lastName: string, firstName: string, role: RoleSite } | null | undefined, projectRole?: { __typename?: 'ProjectRole', name: string } | null | undefined } | null | undefined> | null | undefined, tasks?: Array<{ __typename?: 'Task', name: string, status: Status } | null | undefined> | null | undefined } | null | undefined> };
+
+export type GetProjectRolesQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetProjectRolesQuery = { __typename?: 'Query', getProjectRoles: Array<{ __typename?: 'ProjectRole', id: string, name: string } | null | undefined> };
 
 
 export const CreateProjectDocument = gql`
@@ -1039,20 +1044,8 @@ export const GetProjectsByUserDocument = gql`
       }
     }
     tasks {
-      id
       name
       status
-      description
-      priority
-      projectId
-      timing
-      users {
-        id
-        email
-        lastName
-        firstName
-        role
-      }
     }
   }
 }
@@ -1084,3 +1077,38 @@ export function useGetProjectsByUserLazyQuery(baseOptions?: Apollo.LazyQueryHook
 export type GetProjectsByUserQueryHookResult = ReturnType<typeof useGetProjectsByUserQuery>;
 export type GetProjectsByUserLazyQueryHookResult = ReturnType<typeof useGetProjectsByUserLazyQuery>;
 export type GetProjectsByUserQueryResult = Apollo.QueryResult<GetProjectsByUserQuery, GetProjectsByUserQueryVariables>;
+export const GetProjectRolesDocument = gql`
+    query getProjectRoles {
+  getProjectRoles {
+    id
+    name
+  }
+}
+    `;
+
+/**
+ * __useGetProjectRolesQuery__
+ *
+ * To run a query within a React component, call `useGetProjectRolesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetProjectRolesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetProjectRolesQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetProjectRolesQuery(baseOptions?: Apollo.QueryHookOptions<GetProjectRolesQuery, GetProjectRolesQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetProjectRolesQuery, GetProjectRolesQueryVariables>(GetProjectRolesDocument, options);
+      }
+export function useGetProjectRolesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetProjectRolesQuery, GetProjectRolesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetProjectRolesQuery, GetProjectRolesQueryVariables>(GetProjectRolesDocument, options);
+        }
+export type GetProjectRolesQueryHookResult = ReturnType<typeof useGetProjectRolesQuery>;
+export type GetProjectRolesLazyQueryHookResult = ReturnType<typeof useGetProjectRolesLazyQuery>;
+export type GetProjectRolesQueryResult = Apollo.QueryResult<GetProjectRolesQuery, GetProjectRolesQueryVariables>;

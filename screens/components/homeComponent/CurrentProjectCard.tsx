@@ -9,7 +9,7 @@ import {
     FlatList
 } from 'react-native';
 
-import { useGetAllProjectsQuery } from "../../graphql/graphql";
+import { useGetAllProjectsQuery } from "../../../graphql/graphql";
 
 export default function CurrentProjectCard() {
     const { data: project, error } = useGetAllProjectsQuery();

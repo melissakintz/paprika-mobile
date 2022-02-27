@@ -1,6 +1,4 @@
-import AsyncStorage, {
-  useAsyncStorage,
-} from "@react-native-async-storage/async-storage";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
 import React, { useEffect, useState } from "react";
 import {
@@ -15,6 +13,7 @@ import { RootStateOrAny, useDispatch, useSelector } from "react-redux";
 import { useLoginMutation } from "../graphql/graphql";
 import { loggedIn } from "../Redux/login";
 import { setUser } from "../Redux/user";
+import getUser from "../utils/userUtils";
 
 export default function LoginScreen() {
   const dispatch = useDispatch();
@@ -23,20 +22,19 @@ export default function LoginScreen() {
   const [password, setPassword] = useState("");
   const navigation = useNavigation();
   const isLogged = useSelector((state: RootStateOrAny) => state.logged.value);
-  const { getItem } = useAsyncStorage("userId");
-  const [userId, setUserId] = useState("");
+  const [userExists, setUserExists] = useState(false);
 
   useEffect(() => {
-    const getUserId = async () => {
-      const id = await getItem();
-      if (id) setUserId(id);
+    const userExists = async () => {
+      const user = await getUser();
+      if (user !== null) setUserExists(true);
     };
-    getUserId();
+    userExists();
   }, []);
 
   useEffect(() => {
-    if (userId || isLogged) navigation.navigate("HomeScreen");
-  }, [userId, isLogged]);
+    if (userExists || isLogged) navigation.navigate("HomeScreen");
+  }, [userExists, isLogged]);
 
   const [mutationLogin, { data: user }] = useLoginMutation();
   async function login() {
@@ -44,7 +42,7 @@ export default function LoginScreen() {
     if (user?.login.token) {
       dispatch(loggedIn());
       dispatch(setUser(user.login.user));
-      await AsyncStorage.setItem("userId", user.login.user.id);
+      await AsyncStorage.setItem("user", JSON.stringify(user.login.user));
       navigation.navigate("HomeScreen");
     } else {
       setIncorrectStyle(true);

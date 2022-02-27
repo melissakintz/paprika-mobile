@@ -1,13 +1,19 @@
+import Ionicons from "@expo/vector-icons/Ionicons";
+import { RouteProp } from "@react-navigation/native";
 import {
+  FlatList,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
-  FlatList,
 } from "react-native";
-import Ionicons from "@expo/vector-icons/Ionicons";
+import { Task } from "../../graphql/graphql";
 
-export default function OneTaskScreen({ route }: object) {
+export default function OneTaskScreen({
+  route,
+}: {
+  route: RouteProp<{ params: { task: Task } }, "params">;
+}) {
   const { task } = route.params;
 
   return (
@@ -96,7 +102,7 @@ const styles = StyleSheet.create({
     paddingTop: 16,
     paddingBottom: 16,
     borderBottomWidth: 4,
-    borderColor: "white"
+    borderColor: "white",
   },
   avatar: {
     justifyContent: "center",
@@ -107,7 +113,7 @@ const styles = StyleSheet.create({
     borderRadius: 100,
     marginRight: 16,
   },
-  names:{
-    fontWeight: "bold"
-  }
+  names: {
+    fontWeight: "bold",
+  },
 });

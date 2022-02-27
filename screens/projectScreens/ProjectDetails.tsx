@@ -5,6 +5,7 @@ import { StyleSheet, Text, View } from "react-native";
 import { FlatList, TouchableOpacity } from "react-native-gesture-handler";
 import { RootStateOrAny, useSelector } from "react-redux";
 import { Project, Task, User } from "../../graphql/graphql";
+import ProjectContainer from "../components/projectComponent/ProjectContainer";
 
 export default function ProjectDetails({
   route,
@@ -19,8 +20,7 @@ export default function ProjectDetails({
 
   return (
     <>
-      <View style={styles.container}>
-        <View style={styles.header} />
+      <ProjectContainer>
         <View style={styles.section}>
           <Text style={styles.title}>{project.name}</Text>
           <Text style={styles.client}>
@@ -72,13 +72,15 @@ export default function ProjectDetails({
             keyExtractor={(task, index) => task.id || index}
           />
         </View>
-      </View>
+      </ProjectContainer>
       {user.role !== "USER" ? (
         <TouchableOpacity
           onPress={() =>
             navigation.navigate("Projets", {
               screen: "AssignUserToProject",
-              project: project,
+              params: {
+                project: project,
+              },
             })
           }
         >
@@ -149,24 +151,12 @@ const moreThanNow = (date: string): boolean => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    alignSelf: "center",
-    width: "100%",
-    backgroundColor: "white",
-    padding: 20,
-    marginVertical: 10,
-  },
   client: {
     color: "gray",
     textTransform: "uppercase",
     alignSelf: "center",
   },
   description: { textAlign: "center", marginTop: 30 },
-  header: {
-    height: 2,
-    marginBottom: 8,
-    backgroundColor: "orange",
-  },
   title: {
     fontWeight: "bold",
     textAlign: "center",

@@ -1,51 +1,37 @@
-import AsyncStorage, {
-  useAsyncStorage,
-} from "@react-native-async-storage/async-storage";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { useEffect, useState } from "react";
-import { Image, ScrollView, StyleSheet, View } from "react-native";
-import { RootStateOrAny, useDispatch, useSelector } from "react-redux";
 import {
-  useGetAllProjectsQuery,
-  useGetAllTasksQuery,
-  useGetAllUsersQuery,
-  useGetUserQuery,
-} from "../graphql/graphql";
+  Image,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { RootStateOrAny, useDispatch, useSelector } from "react-redux";
+import { useGetAllUsersQuery, useGetUserQuery } from "../graphql/graphql";
 import { loggedOut } from "../Redux/login";
-import CalendarHome from "./homeComponent/Calendar";
-import CurrentProjectCard from "./homeComponent/CurrentProjectCard";
-import CurrentTaskCard from "./homeComponent/CurrentTaskCard";
-import HelpCard from "./homeComponent/HelpCard";
-import ProjectByRole from "./homeComponent/ProjectByRole";
+import getUser from "../utils/userUtils";
+import CalendarHome from "./components/homeComponent/Calendar";
+import CurrentProjectCard from "./components/homeComponent/CurrentProjectCard";
+import CurrentTaskCard from "./components/homeComponent/CurrentTaskCard";
+import HelpCard from "./components/homeComponent/HelpCard";
+import ProjectByRole from "./components/homeComponent/ProjectByRole";
 
 export default function HomeScreen({ navigation }: any) {
   const dispatch = useDispatch();
-
-  const isLogged = useSelector((state: RootStateOrAny) => state.logged.value);
-  const { getItem } = useAsyncStorage("userId");
   const [userId, setUserId] = useState("");
-
-  const { data: project, error } = useGetAllProjectsQuery();
-  const { data: tasks } = useGetAllTasksQuery();
-  // console.log(project?.getAllProjects[0].description);
-  const allTasksArray = tasks?.getAllTasks;
-  const numberOfTasks = allTasksArray?.length;
-  const allProjectArray = project?.getAllProjects;
-  const numberOfProject = allProjectArray?.length;
-
-  const [projectList, setProjectList] = useState(false);
-  const [taskList, setTaskList] = useState(false);
-  const [helpModal, setHelpModal] = useState(false);
-  const [projectDescription, setProjectDescription] = useState(false);
-  const currentUserTab = useGetAllUsersQuery();
-  const currentUser = currentUserTab.data?.getAllUsers[0].id;
+  const isLogged = useSelector((state: RootStateOrAny) => state.logged.value);
 
   useEffect(() => {
     const getUserId = async () => {
-      const id = await getItem();
-      if (id) setUserId(id);
+      const user = await getUser();
+      if (user !== null) {
+        setUserId(user.id);
+      }
     };
     getUserId();
-  }, []);
+  }, [userId]);
 
   useEffect(() => {
     if (!(userId || isLogged)) navigation.navigate("Login");
@@ -53,20 +39,31 @@ export default function HomeScreen({ navigation }: any) {
 
   async function logout() {
     dispatch(loggedOut());
-    await AsyncStorage.removeItem("userId");
+    await AsyncStorage.removeItem("user");
     navigation.navigate("Login");
   }
+
+  const [taskList, setTaskList] = useState(false);
+  const currentUserTab = useGetAllUsersQuery();
+  const currentUser = currentUserTab.data?.getAllUsers[0].id;
 
   const { data: user, error: errorUser } = useGetUserQuery({
     variables: { userId: currentUser! },
   });
-  console.log();
-  const date = new Date();
-  const currentDate =
-    date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate();
 
   return (
     <ScrollView>
+      <View style={styles.container}>
+        <TouchableOpacity
+          style={styles.compteBtn}
+          onPress={() => navigation.navigate("ProfilScreen", { user })}
+        >
+          <Text style={{ color: "#F2F2F2" }}>Mon compte</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.logoutBtn} onPress={logout}>
+          <Text style={{ color: "#F2F2F2" }}>Déconnexion</Text>
+        </TouchableOpacity>
+      </View>
       <CalendarHome />
       <Image style={styles.img} source={require("../assets/paprika1.png")} />
       <View style={styles.viewContainer}>
