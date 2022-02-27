@@ -4,26 +4,24 @@ import {
   HttpLink,
   InMemoryCache,
 } from "@apollo/client";
+import { setContext } from "@apollo/client/link/context";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import AsyncStorage, {
+  useAsyncStorage,
+} from "@react-native-async-storage/async-storage";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { AppRegistry } from "react-native";
 import { Provider, RootStateOrAny, useSelector } from "react-redux";
-import HomeScreen from "./screens/HomeScreen";
 import LoginScreen from "./screens/LoginScreen";
-import ProfilScreen from "./screens/profilScreens/ProfilScreen";
-import ProjectDetails from "./screens/projectScreens/ProjectDetails";
-import ProjectScreen from "./screens/projectScreens/ProjectScreen";
-import OneTaskScreen from "./screens/taskScreens/OneTaskScreen";
-import TaskScreen from "./screens/taskScreens/TaskScreen";
+import HomeStack from "./screens/navigation/HomeNavigation";
+import ProjectStack from "./screens/navigation/ProjectNavigation";
+import TaskStack from "./screens/navigation/TaskNavigation";
 import store from "./store";
-import { setContext } from "@apollo/client/link/context";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 
-
-const link = new HttpLink({ uri: "http://192.168.1.21:4000/graphql" });
+const link = new HttpLink({ uri: "http://192.168.1.25:4000/graphql" });
 
 const authLink = setContext(async (_, { headers }) => {
   const userId = await AsyncStorage.getItem("userId");
@@ -77,69 +75,22 @@ const TabNavigator = () => {
   );
 };
 
-const ProjectStack = () => {
-  return (
-    <Stack.Navigator>
-      <Stack.Group>
-        <Stack.Screen
-          name="ProjetScreen"
-          component={ProjectScreen}
-          options={{ title: "Projets" }}
-        />
-        <Stack.Screen
-          name="ProjetDetails"
-          component={ProjectDetails}
-          options={{ title: "Détails" }}
-        />
-      </Stack.Group>
-    </Stack.Navigator>
-  );
-};
-
-const TaskStack = () => {
-  return (
-    <Stack.Navigator>
-      <Stack.Group>
-        <Stack.Screen
-          name="TaskScreen"
-          component={TaskScreen}
-          options={{ title: "Tâches" }}
-        />
-        <Stack.Screen
-          name="OneTaskScreen"
-          component={OneTaskScreen}
-          options={{ title: "Tâche" }}
-        />
-      </Stack.Group>
-    </Stack.Navigator>
-  );
-};
-
-const HomeStack = () => {
-  return (
-    <Stack.Navigator>
-      <Stack.Group>
-        <Stack.Screen
-          name="HomeScreen"
-          component={HomeScreen}
-          options={{ title: "Accueil" }}
-        />
-        <Stack.Screen
-          name="ProfilScreen"
-          component={ProfilScreen}
-          options={{ title: "Profile" }}
-        />
-      </Stack.Group>
-    </Stack.Navigator>
-  );
-};
-
 function App() {
   const isLogged = useSelector((state: RootStateOrAny) => state.logged.value);
+  const { getItem } = useAsyncStorage("userId");
+  const [userId, setUserId] = useState("");
+
+  useEffect(() => {
+    const getUserId = async () => {
+      const id = await getItem();
+      if (id) setUserId(id);
+    };
+    getUserId();
+  });
 
   return (
     <ApolloProvider client={client}>
-      {isLogged ? (
+      {isLogged || userId ? (
         <NavigationContainer>
           <Stack.Navigator screenOptions={{ headerShown: false }}>
             <Stack.Group>
