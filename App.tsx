@@ -54,7 +54,7 @@ const TabNavigator = () => {
             iconName = focused ? "briefcase" : "briefcase-outline";
           } else if (route.name === "Accueil") {
             iconName = focused ? "fast-food" : "fast-food-outline";
-          } else if (route.name === "Tâches") {
+          } else if (route.name === "Taches") {
             iconName = focused
               ? "checkmark-circle"
               : "checkmark-circle-outline";
@@ -70,7 +70,7 @@ const TabNavigator = () => {
     >
       <Tab.Screen name="Projets" component={ProjectStack} />
       <Tab.Screen name="Accueil" component={HomeStack} />
-      <Tab.Screen name="Tâches" component={TaskStack} />
+      <Tab.Screen name="Taches" component={TaskStack} />
     </Tab.Navigator>
   );
 };
