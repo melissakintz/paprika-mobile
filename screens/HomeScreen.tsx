@@ -39,7 +39,7 @@ export default function HomeScreen({ navigation }: any) {
 
   useEffect(() => {
     if (!(userId || isLogged)) navigation.navigate("Login");
-  });
+  }, [isLogged, userId]);
 
   async function logout() {
     dispatch(loggedOut());

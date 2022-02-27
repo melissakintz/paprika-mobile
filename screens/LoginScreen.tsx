@@ -36,7 +36,7 @@ export default function LoginScreen() {
 
   useEffect(() => {
     if (userId || isLogged) navigation.navigate("HomeScreen");
-  });
+  }, [userId, isLogged]);
 
   const [mutationLogin, { data: user }] = useLoginMutation();
   async function login() {
@@ -63,6 +63,7 @@ export default function LoginScreen() {
           autoCompleteType="email"
           keyboardType="email-address"
           textContentType="emailAddress"
+          autoCapitalize="none"
         />
       </View>
 
