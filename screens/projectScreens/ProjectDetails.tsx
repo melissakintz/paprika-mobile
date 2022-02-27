@@ -1,9 +1,10 @@
-import { Ionicons } from "@expo/vector-icons";
+import { Feather, Ionicons } from "@expo/vector-icons";
 import { RouteProp, useNavigation } from "@react-navigation/native";
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { FlatList, TouchableOpacity } from "react-native-gesture-handler";
-import { Project, Task } from "../../graphql/graphql";
+import { RootStateOrAny, useSelector } from "react-redux";
+import { Project, Task, User } from "../../graphql/graphql";
 
 export default function ProjectDetails({
   route,
@@ -11,61 +12,80 @@ export default function ProjectDetails({
   route: RouteProp<{ params: { project: Project } }, "params">;
 }): JSX.Element {
   const { project } = route.params;
+  const user: User = useSelector(
+    (state: RootStateOrAny) => state.userlogged
+  ).value;
+  const navigation = useNavigation();
+
   return (
-    <View style={styles.container}>
-      <View style={styles.header} />
-      <View style={styles.section}>
-        <Text style={styles.title}>{project.name}</Text>
-        <Text style={styles.client}>
-          <Ionicons name="person" /> {project.client}
-        </Text>
-        <View style={styles.dates}>
-          <View style={styles.date}>
-            <Text>Début: {toLocaleDate(project.startAt)}</Text>
-          </View>
-          <Ionicons name="calendar-outline" size={30} />
-
-          <View
-            style={[
-              styles.date,
-              {
-                backgroundColor: moreThanNow(project.endAt)
-                  ? "#ff726f"
-                  : "lightgreen",
-              },
-            ]}
-          >
-            <Text>Fin: {toLocaleDate(project.endAt)}</Text>
-          </View>
-        </View>
-        <Text style={styles.description}>{project.description}</Text>
-      </View>
-      <View style={styles.section}>
-        <Text style={styles.title}>Personnes associées</Text>
-        <FlatList
-          horizontal={true}
-          data={project.participants}
-          renderItem={(user) => (
-            <View style={styles.worker}>
-              <Text>{user.item?.user?.firstName}</Text>
+    <>
+      <View style={styles.container}>
+        <View style={styles.header} />
+        <View style={styles.section}>
+          <Text style={styles.title}>{project.name}</Text>
+          <Text style={styles.client}>
+            <Ionicons name="person" /> {project.client}
+          </Text>
+          <View style={styles.dates}>
+            <View style={styles.date}>
+              <Text>Début: {toLocaleDate(project.startAt)}</Text>
             </View>
-          )}
-          ListEmptyComponent={() => <Text>Pas encore de participants</Text>}
-          keyExtractor={(user, index) => user.id || index}
-        />
-        <View style={styles.workers}></View>
-      </View>
+            <Ionicons name="calendar-outline" size={30} />
 
-      <View style={styles.section}>
-        <Text style={styles.title}>Tâches associées</Text>
-        <FlatList
-          data={project.tasks}
-          renderItem={(task) => <TaskCard task={task.item} />}
-          ListEmptyComponent={() => <Text>Acunes tâches pour le moment</Text>}
-          keyExtractor={(task, index) => task.id || index}
-        />
+            <View
+              style={[
+                styles.date,
+                {
+                  backgroundColor: moreThanNow(project.endAt)
+                    ? "#ff726f"
+                    : "lightgreen",
+                },
+              ]}
+            >
+              <Text>Fin: {toLocaleDate(project.endAt)}</Text>
+            </View>
+          </View>
+          <Text style={styles.description}>{project.description}</Text>
+        </View>
+        <View style={styles.section}>
+          <Text style={styles.title}>Personnes associées</Text>
+          <FlatList
+            horizontal={true}
+            data={project.participants}
+            renderItem={(user) => (
+              <View style={styles.worker}>
+                <Text>{user.item?.user?.firstName}</Text>
+              </View>
+            )}
+            ListEmptyComponent={() => <Text>Pas encore de participants</Text>}
+            keyExtractor={(user, index) => user.id || index}
+          />
+          <View style={styles.workers}></View>
+        </View>
+
+        <View style={styles.section}>
+          <Text style={styles.title}>Tâches associées</Text>
+          <FlatList
+            data={project.tasks}
+            renderItem={(task) => <TaskCard task={task.item} />}
+            ListEmptyComponent={() => <Text>Acunes tâches pour le moment</Text>}
+            keyExtractor={(task, index) => task.id || index}
+          />
+        </View>
       </View>
-    </View>
+      {user.role !== "USER" ? (
+        <TouchableOpacity
+          onPress={() =>
+            navigation.navigate("Projets", {
+              screen: "AssignUserToProject",
+              project: project,
+            })
+          }
+        >
+          <Feather name="users" size={24} color="black" />
+        </TouchableOpacity>
+      ) : null}
+    </>
   );
 }
 const TaskCard = ({ task }: { task: Task }) => {
@@ -74,7 +94,7 @@ const TaskCard = ({ task }: { task: Task }) => {
     <TouchableOpacity
       style={styles.taskContainer}
       onPress={() =>
-        navigation.navigate("Tâches", {
+        navigation.navigate("Taches", {
           screen: "OneTaskScreen",
           params: { task: task },
         })
