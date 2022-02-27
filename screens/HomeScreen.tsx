@@ -1,5 +1,7 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import React, { useState } from "react";
+import AsyncStorage, {
+  useAsyncStorage,
+} from "@react-native-async-storage/async-storage";
+import React, { useEffect, useState } from "react";
 import {
   FlatList,
   Image,
@@ -11,7 +13,7 @@ import {
 } from "react-native";
 import { Calendar } from "react-native-calendars";
 import { Appbar } from "react-native-paper";
-import { useDispatch } from "react-redux";
+import { RootStateOrAny, useDispatch, useSelector } from "react-redux";
 import {
   useGetAllProjectsQuery,
   useGetAllTasksQuery,
@@ -22,6 +24,23 @@ import { loggedOut } from "../Redux/login";
 
 export default function HomeScreen({ navigation }: any) {
   const dispatch = useDispatch();
+
+  const isLogged = useSelector((state: RootStateOrAny) => state.logged.value);
+  const { getItem } = useAsyncStorage("userId");
+  const [userId, setUserId] = useState("");
+
+  useEffect(() => {
+    const getUserId = async () => {
+      const id = await getItem();
+      if (id) setUserId(id);
+    };
+    getUserId();
+  }, []);
+
+  useEffect(() => {
+    if (!(userId || isLogged)) navigation.navigate("Login");
+  });
+
   async function logout() {
     dispatch(loggedOut());
     await AsyncStorage.removeItem("userId");

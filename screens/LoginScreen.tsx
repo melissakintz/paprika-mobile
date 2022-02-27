@@ -1,6 +1,8 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import AsyncStorage, {
+  useAsyncStorage,
+} from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Image,
   StyleSheet,
@@ -9,7 +11,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { useDispatch } from "react-redux";
+import { RootStateOrAny, useDispatch, useSelector } from "react-redux";
 import { useLoginMutation } from "../graphql/graphql";
 import { loggedIn } from "../Redux/login";
 import { setUser } from "../Redux/user";
@@ -20,6 +22,21 @@ export default function LoginScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigation = useNavigation();
+  const isLogged = useSelector((state: RootStateOrAny) => state.logged.value);
+  const { getItem } = useAsyncStorage("userId");
+  const [userId, setUserId] = useState("");
+
+  useEffect(() => {
+    const getUserId = async () => {
+      const id = await getItem();
+      if (id) setUserId(id);
+    };
+    getUserId();
+  }, []);
+
+  useEffect(() => {
+    if (userId || isLogged) navigation.navigate("HomeScreen");
+  });
 
   const [mutationLogin, { data: user }] = useLoginMutation();
   async function login() {
@@ -28,7 +45,7 @@ export default function LoginScreen() {
       dispatch(loggedIn());
       dispatch(setUser(user.login.user));
       await AsyncStorage.setItem("userId", user.login.user.id);
-      navigation.navigate({ key: "HomeScreen" });
+      navigation.navigate("HomeScreen");
     } else {
       setIncorrectStyle(true);
     }

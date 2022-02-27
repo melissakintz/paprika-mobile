@@ -10,12 +10,11 @@ import AsyncStorage, {
   useAsyncStorage,
 } from "@react-native-async-storage/async-storage";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { NavigationContainer } from "@react-navigation/native";
+import { NavigationContainer, useNavigation } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import React, { useEffect, useState } from "react";
 import { AppRegistry } from "react-native";
 import { Provider, RootStateOrAny, useSelector } from "react-redux";
-import LoginScreen from "./screens/LoginScreen";
 import HomeStack from "./screens/navigation/HomeStack";
 import LoginStack from "./screens/navigation/LoginStack";
 import ProjectStack from "./screens/navigation/ProjectStack";
@@ -77,34 +76,18 @@ const TabNavigator = () => {
 };
 
 function App() {
-  const isLogged = useSelector((state: RootStateOrAny) => state.logged.value);
-  const { getItem } = useAsyncStorage("userId");
-  const [userId, setUserId] = useState("");
-
-  useEffect(() => {
-    const getUserId = async () => {
-      const id = await getItem();
-      if (id) setUserId(id);
-    };
-    getUserId();
-  });
-
   return (
     <ApolloProvider client={client}>
-      {isLogged || userId ? (
-        <NavigationContainer>
-          <Stack.Navigator screenOptions={{ headerShown: false }}>
-            <Stack.Group>
-              <Stack.Screen name="Home" component={TabNavigator} />
-            </Stack.Group>
-            <Stack.Group>
-              <Stack.Screen name="Login" component={LoginStack} />
-            </Stack.Group>
-          </Stack.Navigator>
-        </NavigationContainer>
-      ) : (
-        <LoginScreen />
-      )}
+      <NavigationContainer>
+        <Stack.Navigator screenOptions={{ headerShown: false }}>
+          <Stack.Group>
+            <Stack.Screen name="Home" component={TabNavigator} />
+          </Stack.Group>
+          <Stack.Group>
+            <Stack.Screen name="Login" component={LoginStack} />
+          </Stack.Group>
+        </Stack.Navigator>
+      </NavigationContainer>
     </ApolloProvider>
   );
 }
