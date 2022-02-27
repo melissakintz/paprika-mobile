@@ -1,4 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useNavigation } from "@react-navigation/native";
 import React, { useState } from "react";
 import {
   Image,
@@ -18,6 +19,7 @@ export default function LoginScreen() {
   const [incorrectStyle, setIncorrectStyle] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const navigation = useNavigation();
 
   const [mutationLogin, { data: user }] = useLoginMutation();
   async function login() {
@@ -26,6 +28,7 @@ export default function LoginScreen() {
       dispatch(loggedIn());
       dispatch(setUser(user.login.user));
       await AsyncStorage.setItem("userId", user.login.user.id);
+      navigation.navigate({ key: "HomeScreen" });
     } else {
       setIncorrectStyle(true);
     }
@@ -41,6 +44,8 @@ export default function LoginScreen() {
           placeholderTextColor="#E33636"
           onChangeText={(email) => setEmail(email)}
           autoCompleteType="email"
+          keyboardType="email-address"
+          textContentType="emailAddress"
         />
       </View>
 

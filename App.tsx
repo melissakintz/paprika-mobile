@@ -16,9 +16,10 @@ import React, { useEffect, useState } from "react";
 import { AppRegistry } from "react-native";
 import { Provider, RootStateOrAny, useSelector } from "react-redux";
 import LoginScreen from "./screens/LoginScreen";
-import HomeStack from "./screens/navigation/HomeNavigation";
-import ProjectStack from "./screens/navigation/ProjectNavigation";
-import TaskStack from "./screens/navigation/TaskNavigation";
+import HomeStack from "./screens/navigation/HomeStack";
+import LoginStack from "./screens/navigation/LoginStack";
+import ProjectStack from "./screens/navigation/ProjectStack";
+import TaskStack from "./screens/navigation/TaskStack";
 import store from "./store";
 
 const link = new HttpLink({ uri: "http://192.168.1.25:4000/graphql" });
@@ -95,6 +96,9 @@ function App() {
           <Stack.Navigator screenOptions={{ headerShown: false }}>
             <Stack.Group>
               <Stack.Screen name="Home" component={TabNavigator} />
+            </Stack.Group>
+            <Stack.Group>
+              <Stack.Screen name="Login" component={LoginStack} />
             </Stack.Group>
           </Stack.Navigator>
         </NavigationContainer>
