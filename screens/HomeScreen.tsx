@@ -65,7 +65,6 @@ export default function HomeScreen({ navigation }: any) {
         </TouchableOpacity>
       </View>
       <CalendarHome />
-      <Image style={styles.img} source={require("../assets/paprika1.png")} />
       <View style={styles.viewContainer}>
         <HelpCard />
         <CurrentProjectCard />

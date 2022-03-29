@@ -2,7 +2,7 @@ import {
   ApolloClient,
   ApolloProvider,
   HttpLink,
-  InMemoryCache,
+  InMemoryCache
 } from "@apollo/client";
 import { setContext } from "@apollo/client/link/context";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -20,7 +20,7 @@ import TaskStack from "./screens/navigation/TaskStack";
 import store from "./store";
 import getUser from "./utils/userUtils";
 
-const link = new HttpLink({ uri: "http://192.168.1.25:4000/graphql" });
+const link = new HttpLink({ uri: "http://192.168.1.20:4000/graphql" });
 
 const authLink = setContext(async (_, { headers }) => {
   const user: User | null = await getUser();

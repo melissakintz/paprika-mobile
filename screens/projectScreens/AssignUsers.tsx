@@ -34,7 +34,9 @@ export default function AssignUsers({
 const CreateForm = ({ project }: { project: Project }): JSX.Element => {
   const { data: users } = useGetAllUsersQuery();
   const { data: roles } = useGetProjectRolesQuery();
-  const [assignUsers] = useAssignUsersToProjectMutation();
+  const [assignUsers] = useAssignUsersToProjectMutation({
+    refetchQueries: ["GetProjectsByUser"],
+  });
   const [assignees, setAssignees] = useState<
     Array<{ userId: string; roleId: string }>
   >([]);

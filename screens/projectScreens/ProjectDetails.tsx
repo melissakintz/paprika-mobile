@@ -54,7 +54,7 @@ export default function ProjectDetails({
             data={project.participants}
             renderItem={(user) => (
               <View style={styles.worker}>
-                <Text>{user.item?.user?.firstName}</Text>
+                <Text>{user.item?.user?.email}</Text>
               </View>
             )}
             ListEmptyComponent={() => <Text>Pas encore de participants</Text>}
@@ -180,6 +180,7 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   worker: {
+    marginHorizontal: 10,
     width: 45,
     height: 45,
     borderRadius: 100,
