@@ -23,7 +23,7 @@ import { setContext } from "@apollo/client/link/context";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 
-const link = new HttpLink({ uri: "http://192.168.1.11:4000/graphql" });
+const link = new HttpLink({ uri: "http://192.168.1.21:4000/graphql" });
 
 const authLink = setContext(async (_, { headers }) => {
   const userId = await AsyncStorage.getItem("userId");
