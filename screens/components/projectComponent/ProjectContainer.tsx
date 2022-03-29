@@ -16,6 +16,7 @@ export default function ProjectContainer({
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
     alignSelf: "center",
     width: "100%",
     backgroundColor: "white",

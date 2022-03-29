@@ -1,5 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
-import { RouteProp } from "@react-navigation/native";
+import { RouteProp, useNavigation } from "@react-navigation/native";
 import React, { useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import BouncyCheckbox from "react-native-bouncy-checkbox";
@@ -32,6 +32,7 @@ export default function AssignUsers({
 }
 
 const CreateForm = ({ project }: { project: Project }): JSX.Element => {
+  const navigation = useNavigation();
   const { data: users } = useGetAllUsersQuery();
   const { data: roles } = useGetProjectRolesQuery();
   const [assignUsers] = useAssignUsersToProjectMutation({
@@ -49,10 +50,11 @@ const CreateForm = ({ project }: { project: Project }): JSX.Element => {
     }
   };
 
-  const handleValidation = () => {
+  const handleValidation = async () => {
     assignUsers({
       variables: { projectId: project.id, usersRoles: assignees },
     });
+    navigation.goBack();
   };
 
   return (
@@ -64,7 +66,7 @@ const CreateForm = ({ project }: { project: Project }): JSX.Element => {
           <View style={styles.list}>
             <Text style={styles.title}>
               <Ionicons name="person" color={"gray"} size={16} />
-              {user.item.email}{" "}
+              {user.item.email}
             </Text>
             <FlatList
               horizontal={true}
