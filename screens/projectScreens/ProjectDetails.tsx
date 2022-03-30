@@ -1,9 +1,11 @@
-import { Ionicons } from "@expo/vector-icons";
+import { Feather, Ionicons } from "@expo/vector-icons";
 import { RouteProp, useNavigation } from "@react-navigation/native";
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { FlatList, TouchableOpacity } from "react-native-gesture-handler";
-import { Project, Task } from "../../graphql/graphql";
+import { RootStateOrAny, useSelector } from "react-redux";
+import { Project, Task, User } from "../../graphql/graphql";
+import ProjectContainer from "../components/projectComponent/ProjectContainer";
 
 export default function ProjectDetails({
   route,
@@ -11,9 +13,13 @@ export default function ProjectDetails({
   route: RouteProp<{ params: { project: Project } }, "params">;
 }): JSX.Element {
   const { project } = route.params;
+  const user: User = useSelector(
+    (state: RootStateOrAny) => state.userlogged
+  ).value;
+  const navigation = useNavigation();
+
   return (
-    <View style={styles.container}>
-      <View style={styles.header} />
+    <ProjectContainer>
       <View style={styles.section}>
         <Text style={styles.title}>{project.name}</Text>
         <Text style={styles.client}>
@@ -47,11 +53,11 @@ export default function ProjectDetails({
           data={project.participants}
           renderItem={(user) => (
             <View style={styles.worker}>
-              <Text>{user.item?.user?.firstName}</Text>
+              <Text>{user.item?.user?.email}</Text>
             </View>
           )}
           ListEmptyComponent={() => <Text>Pas encore de participants</Text>}
-          keyExtractor={(user, index) => user.id || index}
+          keyExtractor={(userProject) => userProject?.user?.id}
         />
         <View style={styles.workers}></View>
       </View>
@@ -62,10 +68,26 @@ export default function ProjectDetails({
           data={project.tasks}
           renderItem={(task) => <TaskCard task={task.item} />}
           ListEmptyComponent={() => <Text>Acunes tâches pour le moment</Text>}
-          keyExtractor={(task, index) => task.id || index}
+          keyExtractor={(task) => task?.id}
         />
       </View>
-    </View>
+      <View style={{ flex: 1 }} />
+      {user.role !== "USER" ? (
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() =>
+            navigation.navigate("Projets", {
+              screen: "AssignUserToProject",
+              params: {
+                project: project,
+              },
+            })
+          }
+        >
+          <Feather name="users" size={24} color="black" />
+        </TouchableOpacity>
+      ) : null}
+    </ProjectContainer>
   );
 }
 const TaskCard = ({ task }: { task: Task }) => {
@@ -129,24 +151,12 @@ const moreThanNow = (date: string): boolean => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    alignSelf: "center",
-    width: "100%",
-    backgroundColor: "white",
-    padding: 20,
-    marginVertical: 10,
-  },
   client: {
     color: "gray",
     textTransform: "uppercase",
     alignSelf: "center",
   },
   description: { textAlign: "center", marginTop: 30 },
-  header: {
-    height: 2,
-    marginBottom: 8,
-    backgroundColor: "orange",
-  },
   title: {
     fontWeight: "bold",
     textAlign: "center",
@@ -170,6 +180,7 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   worker: {
+    marginHorizontal: 10,
     width: 45,
     height: 45,
     borderRadius: 100,
@@ -198,5 +209,12 @@ const styles = StyleSheet.create({
     padding: 4,
     borderRadius: 5,
     alignSelf: "flex-end",
+  },
+  button: {
+    backgroundColor: "lightgray",
+    padding: 10,
+    borderRadius: 100,
+    alignSelf: "center",
+    justifyContent: "flex-end",
   },
 });

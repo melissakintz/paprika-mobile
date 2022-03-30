@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import React, { useEffect, useState } from "react";
 import {
   Image,
   ScrollView,
@@ -7,19 +8,39 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { useDispatch } from "react-redux";
+import { RootStateOrAny, useDispatch, useSelector } from "react-redux";
 import { useGetAllUsersQuery, useGetUserQuery } from "../graphql/graphql";
 import { loggedOut } from "../Redux/login";
-import CalendarHome from "./homeComponent/Calendar";
-import CurrentProjectCard from "./homeComponent/CurrentProjectCard";
-import CurrentTaskCard from "./homeComponent/CurrentTaskCard";
-import HelpCard from "./homeComponent/HelpCard";
-import ProjectByRole from "./homeComponent/ProjectByRole";
+import getUser from "../utils/userUtils";
+import CalendarHome from "./components/homeComponent/Calendar";
+import CurrentProjectCard from "./components/homeComponent/CurrentProjectCard";
+import CurrentTaskCard from "./components/homeComponent/CurrentTaskCard";
+import HelpCard from "./components/homeComponent/HelpCard";
+import ProjectByRole from "./components/homeComponent/ProjectByRole";
 
 export default function HomeScreen({ navigation }: any) {
   const dispatch = useDispatch();
-  function logout() {
+  const [userId, setUserId] = useState("");
+  const isLogged = useSelector((state: RootStateOrAny) => state.logged.value);
+
+  useEffect(() => {
+    const getUserId = async () => {
+      const user = await getUser();
+      if (user !== null) {
+        setUserId(user.id);
+      }
+    };
+    getUserId();
+  }, [userId]);
+
+  useEffect(() => {
+    if (!(userId || isLogged)) navigation.navigate("Login");
+  }, [isLogged, userId]);
+
+  async function logout() {
     dispatch(loggedOut());
+    await AsyncStorage.removeItem("user");
+    navigation.navigate("Login");
   }
 
   const [buttonConnection, setButtonConnection] = useState(false);

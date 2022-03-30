@@ -1,5 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import React, { useState } from "react";
+import { useNavigation } from "@react-navigation/native";
+import React, { useEffect, useState } from "react";
 import {
   Image,
   StyleSheet,
@@ -8,27 +9,47 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { useDispatch } from "react-redux";
+import { RootStateOrAny, useDispatch, useSelector } from "react-redux";
 import { useLoginMutation } from "../graphql/graphql";
 import { loggedIn } from "../Redux/login";
 import { setUser } from "../Redux/user";
+import getUser from "../utils/userUtils";
 
 export default function LoginScreen() {
   const dispatch = useDispatch();
   const [incorrectStyle, setIncorrectStyle] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const navigation = useNavigation();
+  const isLogged = useSelector((state: RootStateOrAny) => state.logged.value);
+  const [userExists, setUserExists] = useState(false);
+
+  useEffect(() => {
+    const userExists = async () => {
+      const user = await getUser();
+      if (user !== null) setUserExists(true);
+    };
+    userExists();
+  }, []);
+
+  useEffect(() => {
+    if (userExists || isLogged) navigation.navigate("HomeScreen");
+  }, [userExists, isLogged]);
 
   const [mutationLogin, { data: user }] = useLoginMutation();
   async function login() {
-    await mutationLogin({ variables: { userLoginInput: { email, password } } });
-    if (user?.login.token) {
-      dispatch(loggedIn());
-      dispatch(setUser(user.login.user));
-      await AsyncStorage.setItem("userId", user.login.user.id);
-    } else {
-      setIncorrectStyle(true);
-    }
+    await mutationLogin({
+      variables: { userLoginInput: { email, password } },
+      onCompleted: async (e) => {
+        setIncorrectStyle(false);
+        dispatch(loggedIn());
+        dispatch(setUser(e.login.user));
+        await AsyncStorage.setItem("userId", e.login.user.id);
+      },
+      onError: () => {
+        setIncorrectStyle(true);
+      },
+    });
   }
 
   return (
@@ -41,6 +62,9 @@ export default function LoginScreen() {
           placeholderTextColor="#E33636"
           onChangeText={(email) => setEmail(email)}
           autoCompleteType="email"
+          keyboardType="email-address"
+          textContentType="emailAddress"
+          autoCapitalize="none"
         />
       </View>
 

@@ -4,34 +4,31 @@ import {
   HttpLink,
   InMemoryCache,
 } from "@apollo/client";
+import { setContext } from "@apollo/client/link/context";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import React from "react";
 import { AppRegistry } from "react-native";
-import { Provider, RootStateOrAny, useSelector } from "react-redux";
-import HomeScreen from "./screens/HomeScreen";
-import LoginScreen from "./screens/LoginScreen";
-import ProfilScreen from "./screens/profilScreens/ProfilScreen";
-import ProjectDetails from "./screens/projectScreens/ProjectDetails";
-import ProjectScreen from "./screens/projectScreens/ProjectScreen";
-import OneTaskScreen from "./screens/taskScreens/OneTaskScreen";
-import TaskScreen from "./screens/taskScreens/TaskScreen";
+import { Provider } from "react-redux";
+import { User } from "./graphql/graphql";
+import HomeStack from "./screens/navigation/HomeStack";
+import LoginStack from "./screens/navigation/LoginStack";
+import ProjectStack from "./screens/navigation/ProjectStack";
+import TaskStack from "./screens/navigation/TaskStack";
 import store from "./store";
-import { setContext } from "@apollo/client/link/context";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import getUser from "./utils/userUtils";
 
 
 const link = new HttpLink({ uri: "http://192.168.1.21:4000/graphql" });
 
 const authLink = setContext(async (_, { headers }) => {
-  const userId = await AsyncStorage.getItem("userId");
+  const user: User | null = await getUser();
   return {
     headers: {
       ...headers,
-      authorization:
-        userId !== null || userId !== undefined ? userId : undefined,
+      authorization: user ? user.id : undefined,
     },
   };
 });
@@ -77,79 +74,19 @@ const TabNavigator = () => {
   );
 };
 
-const ProjectStack = () => {
-  return (
-    <Stack.Navigator>
-      <Stack.Group>
-        <Stack.Screen
-          name="ProjetScreen"
-          component={ProjectScreen}
-          options={{ title: "Projets" }}
-        />
-        <Stack.Screen
-          name="ProjetDetails"
-          component={ProjectDetails}
-          options={{ title: "Détails" }}
-        />
-      </Stack.Group>
-    </Stack.Navigator>
-  );
-};
-
-const TaskStack = () => {
-  return (
-    <Stack.Navigator>
-      <Stack.Group>
-        <Stack.Screen
-          name="TaskScreen"
-          component={TaskScreen}
-          options={{ title: "Tâches" }}
-        />
-        <Stack.Screen
-          name="OneTaskScreen"
-          component={OneTaskScreen}
-          options={{ title: "Tâche" }}
-        />
-      </Stack.Group>
-    </Stack.Navigator>
-  );
-};
-
-const HomeStack = () => {
-  return (
-    <Stack.Navigator>
-      <Stack.Group>
-        <Stack.Screen
-          name="HomeScreen"
-          component={HomeScreen}
-          options={{ title: "Accueil" }}
-        />
-        <Stack.Screen
-          name="ProfilScreen"
-          component={ProfilScreen}
-          options={{ title: "Profile" }}
-        />
-      </Stack.Group>
-    </Stack.Navigator>
-  );
-};
-
 function App() {
-  const isLogged = useSelector((state: RootStateOrAny) => state.logged.value);
-
   return (
     <ApolloProvider client={client}>
-      {isLogged ? (
-        <NavigationContainer>
-          <Stack.Navigator screenOptions={{ headerShown: false }}>
-            <Stack.Group>
-              <Stack.Screen name="Home" component={TabNavigator} />
-            </Stack.Group>
-          </Stack.Navigator>
-        </NavigationContainer>
-      ) : (
-        <LoginScreen />
-      )}
+      <NavigationContainer>
+        <Stack.Navigator screenOptions={{ headerShown: false }}>
+          <Stack.Group>
+            <Stack.Screen name="Home" component={TabNavigator} />
+          </Stack.Group>
+          <Stack.Group>
+            <Stack.Screen name="Login" component={LoginStack} />
+          </Stack.Group>
+        </Stack.Navigator>
+      </NavigationContainer>
     </ApolloProvider>
   );
 }
