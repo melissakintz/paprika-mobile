@@ -43,6 +43,8 @@ export default function HomeScreen({ navigation }: any) {
     navigation.navigate("Login");
   }
 
+  const [buttonConnection, setButtonConnection] = useState(false);
+  const [modalCard, setModalCard] = useState(false);
   const [taskList, setTaskList] = useState(false);
   const currentUserTab = useGetAllUsersQuery();
   const currentUser = currentUserTab.data?.getAllUsers[0].id;
@@ -53,24 +55,75 @@ export default function HomeScreen({ navigation }: any) {
 
   return (
     <ScrollView>
-      <View style={styles.container}>
-        <TouchableOpacity
-          style={styles.compteBtn}
-          onPress={() => navigation.navigate("ProfilScreen", { user })}
-        >
-          <Text style={{ color: "#F2F2F2" }}>Mon compte</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.logoutBtn} onPress={logout}>
-          <Text style={{ color: "#F2F2F2" }}>Déconnexion</Text>
-        </TouchableOpacity>
+      <TouchableOpacity
+      style={styles.container}
+      onPress={() => {
+        if(buttonConnection == true) {
+          setButtonConnection(false)
+        } else {
+          setButtonConnection(true)
+        }
+      }}
+      >
+        {buttonConnection ? (
+          <>
+            <TouchableOpacity
+              style={styles.compteBtn}
+              onPress={() => navigation.navigate("ProfilScreen", { user })}
+              >
+              <Text style={{ color: "#F2F2F2" }}>Mon compte</Text>
+            </TouchableOpacity>
+  
+            <TouchableOpacity
+              style={styles.logoutBtn}
+              onPress={logout}
+            >
+              <Text style={{ color: "#F2F2F2" }}>Déconnexion</Text>
+            </TouchableOpacity>
+          </>
+        ) : (
+          <View style={styles.containerButtonLogin}>
+            <View style={styles.menuButtonLogin}></View>
+            <View style={styles.menuButtonLogin}></View>
+            <View style={styles.menuButtonLogin}></View>
+          </View>
+        )}
+
+      </TouchableOpacity>
+      {/* <CalendarHome /> */}
+      <View style={styles.containerLogo} >
+        <Image style={styles.img} source={require("../assets/paprika1.png")} />
       </View>
-      <CalendarHome />
-      <View style={styles.viewContainer}>
-        <HelpCard />
-        <CurrentProjectCard />
-        <CurrentTaskCard />
-        <ProjectByRole />
-      </View>
+      <TouchableOpacity
+        onPress={() => {
+          if (modalCard == true) {
+            setModalCard(false)
+          } else {
+            setModalCard(true)
+          }
+        }}
+      >
+        {modalCard ? (
+          <>
+            <View style={styles.viewContainer}>
+              <View style={[ styles.containerLogoModal, styles.containerLogoModalAfter ]}>
+                <Text style={styles.textModal}>Voir moins</Text>
+                <Image style={styles.imgArrowRotate} source={require("../assets/arrowdown.png")} />
+              </View>
+              <HelpCard />
+              <CurrentProjectCard />
+              <CurrentTaskCard />
+              <ProjectByRole />
+            </View>
+          </>
+        ) : (
+          <View style={styles.containerLogoModal}>
+            <Text style={styles.textModal}>Voir plus</Text>
+            <Image style={styles.imgArrow} source={require("../assets/arrowdown.png")} />
+          </View>
+        )}
+      </TouchableOpacity>
+
     </ScrollView>
   );
 }
@@ -78,10 +131,27 @@ export default function HomeScreen({ navigation }: any) {
 const styles = StyleSheet.create({
   viewContainer: {
     flex: 1,
-    backgroundColor: "white",
     opacity: 0.9,
     borderTopLeftRadius: 20,
     borderBottomRightRadius: 20,
+  },
+  containerButtonLogin: {
+    flex: 1,
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "flex-end",
+    backgroundColor: "transparent",
+    width: 100,
+    height: 100
+  },
+  menuButtonLogin: {
+    width: 35,
+    height: 5,
+    color: "black",
+    backgroundColor: "black",
+    marginBottom: 10,
+    paddingRight: 10,
+    marginRight: 20
   },
   containerText: {
     marginLeft: "auto",
@@ -116,12 +186,13 @@ const styles = StyleSheet.create({
   },
   img: {
     flex: 1,
-    backgroundColor: "transparent",
-    alignItems: "center",
-    justifyContent: "center",
-    marginRight: "auto",
+    width: "auto"
+  },
+  containerLogo: {
+    width: 200,
+    marginTop: -30,
     marginLeft: "auto",
-    paddingBottom: 50,
+    marginRight: "auto"
   },
   container: {
     display: "flex",
@@ -131,7 +202,7 @@ const styles = StyleSheet.create({
   },
   compteBtn: {
     width: "40%",
-    borderRadius: 25,
+    borderRadius: 5,
     height: 40,
     alignItems: "center",
     justifyContent: "center",
@@ -140,7 +211,7 @@ const styles = StyleSheet.create({
   },
   logoutBtn: {
     width: "40%",
-    borderRadius: 25,
+    borderRadius: 5,
     height: 40,
     alignItems: "center",
     justifyContent: "center",
@@ -157,4 +228,27 @@ const styles = StyleSheet.create({
     paddingTop: 20,
     paddingBottom: 20,
   },
+  containerLogoModal: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-evenly",
+    paddingTop: 50
+  },
+  imgArrow: {
+    width: 20,
+    height: "auto"
+  },
+  imgArrowRotate: {
+    width: 20,
+    height: "auto",
+    transform: [
+      { rotate: "180deg"}
+    ]
+  },
+  textModal: {
+    textTransform: "uppercase"
+  },
+  containerLogoModalAfter: {
+    paddingBottom: 50
+  }
 });

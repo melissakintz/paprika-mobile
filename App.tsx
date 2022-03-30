@@ -20,7 +20,8 @@ import TaskStack from "./screens/navigation/TaskStack";
 import store from "./store";
 import getUser from "./utils/userUtils";
 
-const link = new HttpLink({ uri: "http://192.168.1.10:4000/graphql" });
+
+const link = new HttpLink({ uri: "http://192.168.1.21:4000/graphql" });
 
 const authLink = setContext(async (_, { headers }) => {
   const userId: string | null = await getUser();

@@ -1,5 +1,5 @@
 import { FlatList, View, Text, StyleSheet, TouchableOpacity } from "react-native";
-import { useGetUserQuery, useGetAllUsersQuery } from "../../graphql/graphql";
+import { Project, useGetUserQuery, useGetAllUsersQuery ,useGetProjectsByUserQuery } from "../../graphql/graphql";
 
 export default function taskProgress() {
   const currentUserTab = useGetAllUsersQuery();
@@ -7,8 +7,28 @@ export default function taskProgress() {
   const { data: user, error: errorUser } = useGetUserQuery({
       variables: { userId: currentUser! },
   });
+  const {
+    data: projects,
+    refetch,
+    loading,
+    fetchMore,
+  } = useGetProjectsByUserQuery();
+
+  console.log(projects?.getProjectsByUser + "test")
+
+
+
   return (
     <View style={styles.containerTask}>
+      <FlatList
+        data={projects?.getProjectsByUser}
+        renderItem={(project) => (project.item?.client)}
+        onRefresh={refetch}
+        refreshing={loading}
+        onEndReached={() => fetchMore}
+        initialNumToRender={5}
+        keyExtractor={(project) => project.id}
+      />
         <View>
           <Text style={[styles.textCenter, styles.textSize]}>Tâche(s) en cours: </Text>
         </View>

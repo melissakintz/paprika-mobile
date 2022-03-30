@@ -75,9 +75,8 @@ const styles = StyleSheet.create({
         zIndex: 2
     },
     textCenterBlack: {
-        textAlign: "center",
+        textAlign: "left",
         color: "black",
-        marginLeft: "auto",
         display: "flex"
     }
 });
