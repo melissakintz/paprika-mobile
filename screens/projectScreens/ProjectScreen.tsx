@@ -86,7 +86,7 @@ const ProjectCard = ({
 
 const RightAction = () => {
   return (
-    <TouchableOpacity style={styles.update}>
+    <TouchableOpacity>
       <Ionicons name="trash" size={30} color="red" />
     </TouchableOpacity>
   );
