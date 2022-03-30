@@ -12,11 +12,11 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import {Calendar, CalendarList, Agenda} from 'react-native-calendars';
 import { Appbar } from 'react-native-paper';
 
-import { useGetAllProjectsLazyQuery, useGetAllProjectsQuery, useGetAllUsersQuery, useGetUserQuery } from "../../graphql/graphql";
-import { useGetAllTasksLazyQuery, useGetAllTasksQuery } from "../../graphql/graphql";
+import { useGetAllProjectsLazyQuery, useGetAllProjectsQuery, useGetAllUsersQuery, useGetUserQuery } from "../../../graphql/graphql";
+import { useGetAllTasksLazyQuery, useGetAllTasksQuery } from "../../../graphql/graphql";
 import { useDispatch } from 'react-redux';
 
-export default function CurrentTaskCard() {
+export default function ProjectByRole() {
     const { data: tasks } = useGetAllTasksQuery();
     const allTasksArray = tasks?.getAllTasks;
     const numberOfTasks = allTasksArray?.length;
@@ -30,7 +30,7 @@ export default function CurrentTaskCard() {
                 setTaskList(true);
             }
         }}>
-            <Text style={styles.text}>Tâches en attentes</Text>
+            <Text style={styles.text}>Projet par rôle</Text>
             <Text style={styles.text}>({numberOfTasks})</Text>
             <Text style={styles.listProject}>
                 {taskList ? (
