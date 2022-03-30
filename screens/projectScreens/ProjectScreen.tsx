@@ -19,10 +19,13 @@ export default function ProjectScreen({
 }) {
   const {
     data: projects,
+    error,
     refetch,
     loading,
     fetchMore,
   } = useGetProjectsByUserQuery();
+
+console.log(error)
 
   return (
     <View style={styles.safeContainer}>
