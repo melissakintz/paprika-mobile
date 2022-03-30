@@ -84,17 +84,21 @@ export default function HomeScreen({ navigation }: any) {
       >
         {modalCard ? (
           <>
-        <View style={styles.viewContainer}>
-          <HelpCard />
-          <CurrentProjectCard />
-          <CurrentTaskCard />
-          <ProjectByRole />
-        </View>
+            <View style={styles.viewContainer}>
+              <View style={[ styles.containerLogoModal, styles.containerLogoModalAfter ]}>
+                <Text style={styles.textModal}>Voir moins</Text>
+                <Image style={styles.imgArrowRotate} source={require("../assets/arrowdown.png")} />
+              </View>
+              <HelpCard />
+              <CurrentProjectCard />
+              <CurrentTaskCard />
+              <ProjectByRole />
+            </View>
           </>
         ) : (
-          <View>
-            <Text>Voir plus</Text>
-            <Image style={styles.img} source={require("../assets/arrowdown.png")} />
+          <View style={styles.containerLogoModal}>
+            <Text style={styles.textModal}>Voir plus</Text>
+            <Image style={styles.imgArrow} source={require("../assets/arrowdown.png")} />
           </View>
         )}
       </TouchableOpacity>
@@ -106,7 +110,6 @@ export default function HomeScreen({ navigation }: any) {
 const styles = StyleSheet.create({
   viewContainer: {
     flex: 1,
-    backgroundColor: "white",
     opacity: 0.9,
     borderTopLeftRadius: 20,
     borderBottomRightRadius: 20,
@@ -204,4 +207,27 @@ const styles = StyleSheet.create({
     paddingTop: 20,
     paddingBottom: 20,
   },
+  containerLogoModal: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-evenly",
+    paddingTop: 50
+  },
+  imgArrow: {
+    width: 20,
+    height: "auto"
+  },
+  imgArrowRotate: {
+    width: 20,
+    height: "auto",
+    transform: [
+      { rotate: "180deg"}
+    ]
+  },
+  textModal: {
+    textTransform: "uppercase"
+  },
+  containerLogoModalAfter: {
+    paddingBottom: 50
+  }
 });
