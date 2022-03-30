@@ -21,14 +21,18 @@ export default function LoginScreen() {
 
   const [mutationLogin, { data: user }] = useLoginMutation();
   async function login() {
-    await mutationLogin({ variables: { userLoginInput: { email, password } } });
-    if (user?.login.token) {
-      dispatch(loggedIn());
-      dispatch(setUser(user.login.user));
-      await AsyncStorage.setItem("userId", user.login.user.id);
-    } else {
-      setIncorrectStyle(true);
-    }
+    await mutationLogin({
+      variables: { userLoginInput: { email, password } },
+      onCompleted: async (e) => {
+        setIncorrectStyle(false);
+        dispatch(loggedIn());
+        dispatch(setUser(e.login.user));
+        await AsyncStorage.setItem("userId", e.login.user.id);
+      },
+      onError: () => {
+        setIncorrectStyle(true);
+      },
+    });
   }
 
   return (

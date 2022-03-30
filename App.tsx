@@ -4,7 +4,9 @@ import {
   HttpLink,
   InMemoryCache,
 } from "@apollo/client";
+import { setContext } from "@apollo/client/link/context";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
@@ -19,11 +21,8 @@ import ProjectScreen from "./screens/projectScreens/ProjectScreen";
 import OneTaskScreen from "./screens/taskScreens/OneTaskScreen";
 import TaskScreen from "./screens/taskScreens/TaskScreen";
 import store from "./store";
-import { setContext } from "@apollo/client/link/context";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 
-
-const link = new HttpLink({ uri: "http://192.168.1.11:4000/graphql" });
+const link = new HttpLink({ uri: "http://192.168.1.20:4000/graphql" });
 
 const authLink = setContext(async (_, { headers }) => {
   const userId = await AsyncStorage.getItem("userId");
