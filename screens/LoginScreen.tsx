@@ -45,6 +45,7 @@ export default function LoginScreen() {
         dispatch(loggedIn());
         dispatch(setUser(e.login.user));
         await AsyncStorage.setItem("userId", e.login.user.id);
+        const unNom = await AsyncStorage.getItem("userId");
       },
       onError: () => {
         setIncorrectStyle(true);
