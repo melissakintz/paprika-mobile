@@ -24,11 +24,11 @@ import getUser from "./utils/userUtils";
 const link = new HttpLink({ uri: "http://192.168.1.21:4000/graphql" });
 
 const authLink = setContext(async (_, { headers }) => {
-  const user: User | null = await getUser();
+  const userId: string | null = await getUser();
   return {
     headers: {
       ...headers,
-      authorization: user ? user.id : undefined,
+      authorization: userId ? userId : undefined,
     },
   };
 });

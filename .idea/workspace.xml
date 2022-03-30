@@ -4,11 +4,7 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="892c4244-580a-40fa-81a6-91ac0f89d581" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/App.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/App.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/graphql/graphql.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/graphql/graphql.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/screens/taskScreens/OneTaskScreen.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/screens/taskScreens/OneTaskScreen.tsx" afterDir="false" />
-    </list>
+    <list default="true" id="892c4244-580a-40fa-81a6-91ac0f89d581" name="Default Changelist" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -29,7 +25,7 @@
     <property name="android.sdk.path" value="$USER_HOME$/Android/Sdk" />
     <property name="cidr.known.project.marker" value="true" />
     <property name="dart.analysis.tool.window.visible" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../SkillPlaceProject/SkillPlace-app/android" />
     <property name="show.migrate.to.gradle.popup" value="false" />
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />

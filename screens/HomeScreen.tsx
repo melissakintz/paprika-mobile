@@ -39,7 +39,7 @@ export default function HomeScreen({ navigation }: any) {
 
   async function logout() {
     dispatch(loggedOut());
-    await AsyncStorage.removeItem("user");
+    await AsyncStorage.removeItem("userId");
     navigation.navigate("Login");
   }
 
