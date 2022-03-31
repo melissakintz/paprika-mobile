@@ -1,119 +1,79 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { RouteProp } from "@react-navigation/native";
-import {
-  FlatList,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
-import { Task } from "../../graphql/graphql";
+import { useState } from "react";
+import { StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { RootStateOrAny, useSelector } from "react-redux";
+import { useCreateCommentMutation } from "../../graphql/graphql";
+import Comments from "./CommentsScreen";
 
-export default function OneTaskScreen({
-  route,
-}: {
-  route: RouteProp<{ params: { task: Task } }, "params">;
-}) {
+export default function OneTaskScreen({ route }: any) {
   const { task } = route.params;
+  const [content, setContent] = useState('');
+  const [createComment, { data: comment }] = useCreateCommentMutation();
+  const userConnected = useSelector((state: RootStateOrAny) => state.userlogged);
+  const userId = userConnected.value.id
+  const taskId = task.id;
+  const [incorrectStyle, setIncorrectStyle] = useState(false);
+  const [correctStyle, setCorrectStyle] = useState(false);
+
+  async function sendNewComment() {
+    try{
+      await createComment({variables: {commentInput: {content, taskId, userId}}});
+      setCorrectStyle(true);
+    } catch(error) {
+      console.log(error);
+      setIncorrectStyle(true);
+    }
+  }
 
   return (
-    <View style={styles.oneTaskContainer}>
-      <Text style={styles.title}>{task.name.toUpperCase()}</Text>
-      <TouchableOpacity
-        style={[
-          styles.btn,
-          task.status === "DONE" && styles.done,
-          task.status === "INPROGRESS" && styles.inprogress,
-          task.status === "OPEN" && styles.open,
-        ]}
-      >
-        <Text>{task.status}</Text>
-      </TouchableOpacity>
-      <View style={styles.description}>
-        <Text style={styles.label}>Description :</Text>
-        <Text style={styles.text}>{task.description}</Text>
+    <View style={{ flex: 1}}>
+      <View>
+        <Text>Titre: {task.name}</Text>
+        <Text>Description: {task.description}</Text>
+        <Text>Status: {task.status ? task.status : ""}</Text>
       </View>
       <View>
-        <FlatList
-          data={task.users}
-          renderItem={(item) => (
-            <View style={styles.userCard}>
-              <View style={styles.avatar}>
-                <Ionicons name="person-outline" color="white" size={32} />
-              </View>
-              <View>
-                <Text style={styles.names}>
-                  {item.item.firstName} {item.item.lastName.toUpperCase()}
-                </Text>
-                <Text>{item.item.email}</Text>
-              </View>
-            </View>
-          )}
-        ></FlatList>
+        <Comments props={task.id}/>
+        <TextInput 
+          onChangeText={setContent}
+          value={content}
+          placeholder={'Nouveau commentaire'}/>
+        <Text style={incorrectStyle ? styles.incorrect : styles.hide}>Message invalide, veuillez réessayer.</Text>
+        <Text style={correctStyle ? styles.succes : styles.hide}>Commentaire ajouté avec succès.</Text>
+        <TouchableOpacity 
+          style={styles.button}
+          onPress={sendNewComment}>
+          <Ionicons name="paper-plane-outline" size={18}/>
+        </TouchableOpacity>
+          
       </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  oneTaskContainer: {
-    flex: 1,
+  button: {
+    backgroundColor: "#45C8F1",
+    width: 40,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
     padding: 10,
-    margin: 10,
+    borderRadius: 40,
   },
-  title: {
-    marginBottom: 8,
-    fontSize: 32,
-    fontWeight: "bold",
+  hide: {
+    display: 'none'
   },
-  btn: {
-    padding: 8,
-    marginBottom: 40,
-    borderLeftWidth: 16,
+  incorrect: {
+    color: '#E33636',
+    fontWeight: 'bold',
+    height: 30,
+    marginBottom: 10,
   },
-  done: {
-    backgroundColor: "#ffcad4",
-    borderLeftColor: "#FF5C7A",
-  },
-  inprogress: {
-    backgroundColor: "#ffe5d9",
-    borderLeftColor: "#FF8F5C",
-  },
-  open: {
-    backgroundColor: "#d8e2dc",
-    borderLeftColor: "#7EA08B",
-  },
-  description: {
-    backgroundColor: "white",
-    padding: 16,
-  },
-  label: {
-    fontWeight: "bold",
-    fontSize: 16,
-    marginBottom: 16,
-  },
-  text: {
-    textAlign: "justify",
-  },
-  userCard: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginTop: 16,
-    paddingTop: 16,
-    paddingBottom: 16,
-    borderBottomWidth: 4,
-    borderColor: "white",
-  },
-  avatar: {
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "pink",
-    width: 48,
-    height: 48,
-    borderRadius: 100,
-    marginRight: 16,
-  },
-  names: {
-    fontWeight: "bold",
-  },
+  succes: {
+    color: '#45C8F1',
+    fontWeight: 'bold',
+    height: 30,
+    marginBottom: 10,
+  }
 });
