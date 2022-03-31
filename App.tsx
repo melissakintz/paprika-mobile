@@ -25,6 +25,7 @@ const link = new HttpLink({ uri: "http://192.168.1.21:4000/graphql" });
 
 const authLink = setContext(async (_, { headers }) => {
   const userId: string | null = await getUser();
+  console.log(userId)
   return {
     headers: {
       ...headers,
