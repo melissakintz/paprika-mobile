@@ -7,7 +7,7 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  View,
+  View
 } from "react-native";
 import { RootStateOrAny, useDispatch, useSelector } from "react-redux";
 import { useLoginMutation } from "../graphql/graphql";
@@ -40,12 +40,14 @@ export default function LoginScreen() {
   async function login() {
     await mutationLogin({
       variables: { userLoginInput: { email, password } },
-      onCompleted: async (e) => {
-        setIncorrectStyle(false);
-        dispatch(loggedIn());
-        dispatch(setUser(e.login.user));
-        await AsyncStorage.setItem("userId", e.login.user.id);
-        const unNom = await AsyncStorage.getItem("userId");
+      onCompleted: async (user) => {
+        try {
+          await AsyncStorage.setItem("@userToken", user.login.token);
+          dispatch(loggedIn());
+          dispatch(setUser(user.login.user));
+        } catch (e) {
+          console.error(e);
+        }
       },
       onError: () => {
         setIncorrectStyle(true);
