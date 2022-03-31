@@ -3,8 +3,8 @@ import { RouteProp, useNavigation } from "@react-navigation/native";
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { FlatList, TouchableOpacity } from "react-native-gesture-handler";
-import { RootStateOrAny, useSelector } from "react-redux";
-import { Project, Task, User } from "../../graphql/graphql";
+import { Project, Task } from "../../graphql/graphql";
+import getUser from "../../utils/userUtils";
 import ProjectContainer from "../components/projectComponent/ProjectContainer";
 
 export default function ProjectDetails({
@@ -13,9 +13,7 @@ export default function ProjectDetails({
   route: RouteProp<{ params: { project: Project } }, "params">;
 }): JSX.Element {
   const { project } = route.params;
-  const user: User = useSelector(
-    (state: RootStateOrAny) => state.userlogged
-  ).value;
+  const currentUser = getUser.getCurrentUser();
   const navigation = useNavigation();
 
   return (
@@ -72,7 +70,7 @@ export default function ProjectDetails({
         />
       </View>
       <View style={{ flex: 1 }} />
-      {user.role !== "USER" ? (
+      {currentUser?.getCurrentUser?.role !== "USER" ? (
         <TouchableOpacity
           style={styles.button}
           onPress={() =>
