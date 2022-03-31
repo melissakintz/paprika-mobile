@@ -11,17 +11,17 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import React from "react";
 import { AppRegistry } from "react-native";
+import { Provider as PaperProvider } from "react-native-paper";
 import { Provider } from "react-redux";
-import { User } from "./graphql/graphql";
 import HomeStack from "./screens/navigation/HomeStack";
 import LoginStack from "./screens/navigation/LoginStack";
 import ProjectStack from "./screens/navigation/ProjectStack";
 import TaskStack from "./screens/navigation/TaskStack";
 import store from "./store";
+import theme from "./styles/theme";
 import getUser from "./utils/userUtils";
 
-
-const link = new HttpLink({ uri: "http://192.168.1.21:4000/graphql" });
+const link = new HttpLink({ uri: "http://192.168.1.20:4000/graphql" });
 
 const authLink = setContext(async (_, { headers }) => {
   const userId: string | null = await getUser();
@@ -91,12 +91,14 @@ function App() {
   );
 }
 
-export default function AppWrapper() {
+export default function Main() {
   return (
     <Provider store={store}>
-      <App />
+      <PaperProvider theme={theme}>
+        <App />
+      </PaperProvider>
     </Provider>
   );
 }
 
-AppRegistry.registerComponent("Paprika", () => AppWrapper);
+AppRegistry.registerComponent("Paprika", () => Main);

@@ -1,4 +1,5 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
+import { useNavigation } from "@react-navigation/native";
 import React from "react";
 import {
   FlatList,
@@ -9,14 +10,10 @@ import {
   View,
 } from "react-native";
 import { Swipeable } from "react-native-gesture-handler";
-import { NavigationStackScreenProps } from "react-navigation-stack";
 import { Project, useGetProjectsByUserQuery } from "../../graphql/graphql";
+import theme from "../../styles/theme";
 
-export default function ProjectScreen({
-  navigation,
-}: {
-  navigation: NavigationStackScreenProps;
-}) {
+export default function ProjectScreen() {
   const {
     data: projects,
     error,
@@ -25,16 +22,12 @@ export default function ProjectScreen({
     fetchMore,
   } = useGetProjectsByUserQuery();
 
-console.log(error)
-
   return (
     <View style={styles.safeContainer}>
       <FlatList
         contentContainerStyle={styles.container}
         data={projects?.getProjectsByUser}
-        renderItem={(project) => (
-          <ProjectCard project={project.item} navigation={navigation} />
-        )}
+        renderItem={(project) => <ProjectCard project={project.item} />}
         ListEmptyComponent={() => <Text>pas de projets en cours</Text>}
         onRefresh={refetch}
         refreshing={loading}
@@ -46,13 +39,8 @@ console.log(error)
   );
 }
 
-const ProjectCard = ({
-  project,
-  navigation,
-}: {
-  project: Project;
-  navigation: NavigationStackScreenProps;
-}): JSX.Element => {
+const ProjectCard = ({ project }: { project: Project }): JSX.Element => {
+  const navigation = useNavigation();
   return (
     <>
       <Swipeable
@@ -70,7 +58,9 @@ const ProjectCard = ({
             <Text
               style={[
                 styles.textBadge,
-                { color: project.endAt ? "green" : "blue" },
+                {
+                  color: project.endAt ? theme.colors.done : theme.colors.open,
+                },
               ]}
             >
               {project.endAt ? "CLOSED" : "OPEN"}
@@ -125,14 +115,18 @@ const styles = StyleSheet.create({
   },
   safeContainer: {
     height: "100%",
+    marginHorizontal: 3,
   },
   badge: {
     padding: 4,
     borderRadius: 5,
-    backgroundColor: "lightgray",
     alignSelf: "flex-end",
+    borderColor: "lightgray",
+    borderStyle: "solid",
+    borderWidth: 1,
   },
   textBadge: {
     fontSize: 10,
+    fontWeight: "bold",
   },
 });
