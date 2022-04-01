@@ -1,18 +1,22 @@
-import {
-  NavigationRouteContext,
-  RouteProp,
-  useNavigation,
-} from "@react-navigation/native";
+import { Ionicons } from "@expo/vector-icons";
+import { RouteProp, useNavigation } from "@react-navigation/native";
 import React, { useState } from "react";
-import { View, TextInput, TouchableOpacity, Text } from "react-native";
-import { useCreateTaskMutation } from "../../graphql/graphql";
+import {
+  FlatList,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import BouncyCheckbox from "react-native-bouncy-checkbox";
+import { Project, useCreateTaskMutation } from "../../graphql/graphql";
 
 export default function CreateTask({
   route,
 }: {
-  route: RouteProp<{ params: { projectId: string } }, "params">;
+  route: RouteProp<{ params: { project: Project } }, "params">;
 }) {
-  const { projectId } = route.params;
+  const { project } = route.params;
   const navigation = useNavigation();
   const [task, setTask] = useState({
     name: "",
@@ -22,6 +26,18 @@ export default function CreateTask({
   });
   const [createTask] = useCreateTaskMutation();
 
+  const [assignees, setAssignees] = useState<Array<string>>([]);
+
+  const handlePress = (isChecked: boolean, user: string) => {
+    if (isChecked) {
+      setAssignees((prev) => [...prev, user]);
+    } else {
+      setAssignees((prev) => prev.filter((el) => el !== user));
+    }
+  };
+
+  console.log({ASSIGNEES: assignees})
+
   const handleCreation = async () => {
     try {
       createTask({
@@ -29,9 +45,9 @@ export default function CreateTask({
           taskInput: {
             name: task.name,
             description: task.description,
-            projectId: projectId,
-            users: ["7e43ae1a-cf45-4111-ae93-6907f952212c"],
-            status: "OPEN"
+            projectId: project.id,
+            users: assignees,
+            status: "OPEN",
           },
         },
       });
@@ -65,6 +81,23 @@ export default function CreateTask({
         placeholder="Description de la tâche..."
         value={task.description}
         onChangeText={(text) => setTask({ ...task, description: text })}
+      />
+      <FlatList
+        scrollEnabled
+        data={project.participants}
+        renderItem={(user) => (
+          <View>
+            <Text>
+              <Ionicons name="person" color={"gray"} size={16} />
+              {user.item?.user?.email}
+            </Text>
+            <BouncyCheckbox
+              onPress={(isChecked: boolean) => {
+                handlePress(isChecked, user.item?.user?.id);
+              }}
+            />
+          </View>
+        )}
       />
       <TouchableOpacity onPress={() => handleCreation()}>
         <Text>Valider</Text>

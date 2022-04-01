@@ -65,7 +65,7 @@ export default function ProjectDetails({
       <View style={styles.section}>
         <TouchableOpacity onPress={() => navigation.navigate("Taches", {
           screen: "CreateTask",
-          params: { projectId: project.id },
+          params: { project: project },
         })
       }>
           <Text>Créer une tâche</Text>
