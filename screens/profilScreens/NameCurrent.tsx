@@ -1,19 +1,16 @@
-import { FlatList, View, Text, StyleSheet, TouchableOpacity } from "react-native";
-import { useGetUserQuery, useGetAllUsersQuery } from "../../graphql/graphql";
+import { StyleSheet, Text, View } from "react-native";
+import getUser from "../../utils/userUtils";
+
 
 export default function NameCurrent() {
-  const currentUserTab = useGetAllUsersQuery();
-  const currentUser = currentUserTab.data?.getAllUsers[0].id;
-  const { data: user, error: errorUser } = useGetUserQuery({
-      variables: { userId: currentUser! },
-  });
+  const currentUser = getUser.getCurrentUser();
     return (
         <View style={styles.containerList}>
             <View>
                 <Text style={[styles.textAlignLeft, styles.textSize , styles.textUnderline]}>Nom: </Text>
             </View>
             <View>
-                <Text style={styles.textAlignRight}>{currentUserTab.data?.getAllUsers[0].firstName}</Text>
+                <Text style={styles.textAlignRight}>{currentUser?.getCurrentUser?.firstName}</Text>
             </View>
         </View>
   )

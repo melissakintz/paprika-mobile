@@ -9,32 +9,22 @@ import {
   TouchableOpacity,
   View
 } from "react-native";
-import { RootStateOrAny, useDispatch, useSelector } from "react-redux";
 import { useLoginMutation } from "../graphql/graphql";
-import { loggedIn } from "../Redux/login";
-import { setUser } from "../Redux/user";
 import getUser from "../utils/userUtils";
 
 export default function LoginScreen() {
-  const dispatch = useDispatch();
   const [incorrectStyle, setIncorrectStyle] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigation = useNavigation();
-  const isLogged = useSelector((state: RootStateOrAny) => state.logged.value);
-  const [userExists, setUserExists] = useState(false);
 
   useEffect(() => {
     const userExists = async () => {
-      const user = await getUser();
-      if (user !== null) setUserExists(true);
+      const user = await getUser.getUserToken();
+      if (user !== null) navigation.navigate("HomeScreen");
     };
     userExists();
   }, []);
-
-  useEffect(() => {
-    if (userExists || isLogged) navigation.navigate("HomeScreen");
-  }, [userExists, isLogged]);
 
   const [mutationLogin, { data: user }] = useLoginMutation();
   async function login() {
@@ -43,8 +33,6 @@ export default function LoginScreen() {
       onCompleted: async (user) => {
         try {
           await AsyncStorage.setItem("@userToken", user.login.token);
-          dispatch(loggedIn());
-          dispatch(setUser(user.login.user));
         } catch (e) {
           console.error(e);
         }

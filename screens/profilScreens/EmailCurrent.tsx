@@ -1,19 +1,17 @@
-import { FlatList, View, Text, StyleSheet, TouchableOpacity } from "react-native";
-import { useGetUserQuery, useGetAllUsersQuery } from "../../graphql/graphql";
+import { StyleSheet, Text, View } from "react-native";
+import { useGetAllUsersQuery } from "../../graphql/graphql";
+import getUser from "../../utils/userUtils";
 
 export default function EmailCurrent() {
   const currentUserTab = useGetAllUsersQuery();
-  const currentUser = currentUserTab.data?.getAllUsers[0].id;
-  const { data: user, error: errorUser } = useGetUserQuery({
-      variables: { userId: currentUser! },
-  });
+  const currentUser = getUser.getCurrentUser();
     return (
         <View style={styles.containerList}>
             <View>
                 <Text style={[styles.textAlignLeft, styles.textSize , styles.textUnderline]}>Email: </Text>
             </View>
             <View>
-                <Text style={styles.textAlignRight}>{currentUserTab.data?.getAllUsers[0].email}</Text>
+                <Text style={styles.textAlignRight}>{currentUser?.getCurrentUser?.email}</Text>
             </View>
         </View>
   )
