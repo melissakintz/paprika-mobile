@@ -37,7 +37,7 @@ export default function CurrentProjectCard() {
                             <Text> {project.item.name }</Text>
                                 <Text> {project.item.client}</Text>
                                 {projectDescription && (
-                                    <Text style={styles.textPadding}>{ project.item.description}</Text>
+                                    <Text style={[styles.textPadding, styles.textDescription]}>{ project.item.description}</Text>
                                 )}
                         </TouchableOpacity>
                     )}
@@ -78,5 +78,10 @@ const styles = StyleSheet.create({
         textAlign: "left",
         color: "black",
         display: "flex"
+    },
+    textDescription: {
+        fontStyle: "italic",
+        fontWeight: "800",
+        color: "grey",
     }
 });
