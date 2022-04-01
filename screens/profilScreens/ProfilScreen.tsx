@@ -1,23 +1,24 @@
 import { FlatList, View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { useGetUserQuery, useGetAllUsersQuery, useGetProjectRolesQuery } from "../../graphql/graphql";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import TaskProgress from "./TaskProgress";
-import NameCurrent from "./NameCurrent";
-import LastNameCurrent from "./LastNameCurrent";
-import EmailCurrent from "./EmailCurrent";
-import RoleCurrent from "./RoleCurrent";
-import RoleCurrentProject from "./RoleProject";
+import InformationsUser from "./InformationsUser";
 
 export default function ProfilScreen({ route }: object) {
   const { user } = route.params;
   const currentUser = user.getUser;
+  const {
+    data: roleUser,
+    error,
+  } = useGetProjectRolesQuery();
+
   return (
     <View style={styles.containerBig}>
       <View style={styles.container}>
-        <NameCurrent />
-        <LastNameCurrent />
-        <EmailCurrent />
-        <RoleCurrent />
-        <RoleCurrentProject />
+        <InformationsUser name={"Nom"} information={currentUser.firstName}/>
+        <InformationsUser name={"Prénom"} information={currentUser.lastName}/>
+        <InformationsUser name={"Email"} information={currentUser.email}/>
+        <InformationsUser name={"Rôle"} information={currentUser.role}/>
       </View>
     <TaskProgress />
 

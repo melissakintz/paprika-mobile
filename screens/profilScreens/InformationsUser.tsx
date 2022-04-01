@@ -1,7 +1,14 @@
+import { isArray } from "@apollo/client/cache/inmemory/helpers";
 import { FlatList, View, Text, StyleSheet, TouchableOpacity } from "react-native";
-import { useGetUserQuery, useGetAllUsersQuery } from "../../graphql/graphql";
+import { useGetUserQuery, useGetAllUsersQuery, ProjectRole } from "../../graphql/graphql";
 
-export default function RoleCurrent() {
+export default function InformationsUser({
+    name,
+    information,
+}: {
+    name: string,
+    information: string | Array<ProjectRole>
+}) {
   const currentUserTab = useGetAllUsersQuery();
   const currentUser = currentUserTab.data?.getAllUsers[0].id;
   const { data: user, error: errorUser } = useGetUserQuery({
@@ -10,10 +17,13 @@ export default function RoleCurrent() {
     return (
         <View style={styles.containerList}>
             <View>
-                <Text style={[styles.textAlignLeft, styles.textSize , styles.textUnderline]}>Status: </Text>
+                <Text style={[styles.textAlignLeft, styles.textSize , styles.textUnderline]}>{name}: </Text>
             </View>
             <View>
-                <Text style={styles.textAlignRight}>{currentUserTab.data?.getAllUsers[0].role}</Text>
+                {isArray(information) ? information.map(
+                    (element, index)=> <Text style={styles.textAlignRight}>{element}</Text>
+                    ) : <Text style={styles.textAlignRight}>{information}</Text>}
+                
             </View>
         </View>
   )
