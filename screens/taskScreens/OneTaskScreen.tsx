@@ -1,19 +1,19 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useState } from "react";
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
-import { RootStateOrAny, useSelector } from "react-redux";
 import { useCreateCommentMutation } from "../../graphql/graphql";
+import getUser from "../../utils/userUtils";
 import Comments from "./CommentsScreen";
 
 export default function OneTaskScreen({ route }: any) {
   const { task } = route.params;
   const [content, setContent] = useState('');
   const [createComment, { data: comment }] = useCreateCommentMutation();
-  const userConnected = useSelector((state: RootStateOrAny) => state.userlogged);
-  const userId = userConnected.value.id
   const taskId = task.id;
   const [incorrectStyle, setIncorrectStyle] = useState(false);
   const [correctStyle, setCorrectStyle] = useState(false);
+  const currentUser = getUser.getCurrentUser();
+  const userId = currentUser!.getCurrentUser!.id;
 
   async function sendNewComment() {
     try{
