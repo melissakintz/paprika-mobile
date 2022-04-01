@@ -377,14 +377,6 @@ export type UpdateTaskMutationVariables = Exact<{
 
 export type UpdateTaskMutation = { __typename?: 'Mutation', updateTask: { __typename?: 'Task', id: string, name: string, description: string, status: Status, priority: Priority, projectId: string, timing?: string | null | undefined, users?: Array<{ __typename?: 'User', id: string, email: string, lastName: string, firstName: string, role: RoleSite } | null | undefined> | null | undefined } };
 
-export type AssignUsersToProjectMutationVariables = Exact<{
-  projectId: Scalars['String'];
-  usersRoles?: InputMaybe<Array<InputMaybe<UsersRoles>> | InputMaybe<UsersRoles>>;
-}>;
-
-
-export type AssignUsersToProjectMutation = { __typename?: 'Mutation', assignUsersToProject?: boolean | null | undefined };
-
 export type GetAllUsersQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -438,12 +430,7 @@ export type GetCommentsTaskQuery = { __typename?: 'Query', getCommentsByTask: Ar
 export type GetProjectsByUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetProjectsByUserQuery = { __typename?: 'Query', getProjectsByUser: Array<{ __typename?: 'Project', id: string, startAt?: any | null | undefined, endAt?: any | null | undefined, name: string, client: string, description: string, participants?: Array<{ __typename?: 'UserProject', user?: { __typename?: 'User', id: string, email: string, lastName: string, firstName: string, role: RoleSite } | null | undefined, projectRole?: { __typename?: 'ProjectRole', name: string } | null | undefined } | null | undefined> | null | undefined, tasks?: Array<{ __typename?: 'Task', name: string, status: Status } | null | undefined> | null | undefined } | null | undefined> };
-
-export type GetProjectRolesQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type GetProjectRolesQuery = { __typename?: 'Query', getProjectRoles: Array<{ __typename?: 'ProjectRole', id: string, name: string } | null | undefined> };
+export type GetProjectsByUserQuery = { __typename?: 'Query', getProjectsByUser: Array<{ __typename?: 'Project', id: string, startAt?: any | null | undefined, endAt?: any | null | undefined, name: string, client: string, description: string, participants?: Array<{ __typename?: 'UserProject', user?: { __typename?: 'User', id: string, email: string, lastName: string, firstName: string, role: RoleSite } | null | undefined, projectRole?: { __typename?: 'ProjectRole', name: string } | null | undefined } | null | undefined> | null | undefined, tasks?: Array<{ __typename?: 'Task', id: string, name: string, status: Status, description: string, priority: Priority, projectId: string, timing?: string | null | undefined, users?: Array<{ __typename?: 'User', id: string, email: string, lastName: string, firstName: string, role: RoleSite } | null | undefined> | null | undefined } | null | undefined> | null | undefined } | null | undefined> };
 
 
 export const CreateProjectDocument = gql`
@@ -651,38 +638,6 @@ export function useUpdateTaskMutation(baseOptions?: Apollo.MutationHookOptions<U
 export type UpdateTaskMutationHookResult = ReturnType<typeof useUpdateTaskMutation>;
 export type UpdateTaskMutationResult = Apollo.MutationResult<UpdateTaskMutation>;
 export type UpdateTaskMutationOptions = Apollo.BaseMutationOptions<UpdateTaskMutation, UpdateTaskMutationVariables>;
-export const AssignUsersToProjectDocument = gql`
-    mutation AssignUsersToProject($projectId: String!, $usersRoles: [UsersRoles]) {
-  assignUsersToProject(projectId: $projectId, usersRoles: $usersRoles)
-}
-    `;
-export type AssignUsersToProjectMutationFn = Apollo.MutationFunction<AssignUsersToProjectMutation, AssignUsersToProjectMutationVariables>;
-
-/**
- * __useAssignUsersToProjectMutation__
- *
- * To run a mutation, you first call `useAssignUsersToProjectMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useAssignUsersToProjectMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [assignUsersToProjectMutation, { data, loading, error }] = useAssignUsersToProjectMutation({
- *   variables: {
- *      projectId: // value for 'projectId'
- *      usersRoles: // value for 'usersRoles'
- *   },
- * });
- */
-export function useAssignUsersToProjectMutation(baseOptions?: Apollo.MutationHookOptions<AssignUsersToProjectMutation, AssignUsersToProjectMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<AssignUsersToProjectMutation, AssignUsersToProjectMutationVariables>(AssignUsersToProjectDocument, options);
-      }
-export type AssignUsersToProjectMutationHookResult = ReturnType<typeof useAssignUsersToProjectMutation>;
-export type AssignUsersToProjectMutationResult = Apollo.MutationResult<AssignUsersToProjectMutation>;
-export type AssignUsersToProjectMutationOptions = Apollo.BaseMutationOptions<AssignUsersToProjectMutation, AssignUsersToProjectMutationVariables>;
 export const GetAllUsersDocument = gql`
     query getAllUsers {
   getAllUsers {
@@ -1044,8 +999,20 @@ export const GetProjectsByUserDocument = gql`
       }
     }
     tasks {
+      id
       name
       status
+      description
+      priority
+      projectId
+      timing
+      users {
+        id
+        email
+        lastName
+        firstName
+        role
+      }
     }
   }
 }
@@ -1077,38 +1044,3 @@ export function useGetProjectsByUserLazyQuery(baseOptions?: Apollo.LazyQueryHook
 export type GetProjectsByUserQueryHookResult = ReturnType<typeof useGetProjectsByUserQuery>;
 export type GetProjectsByUserLazyQueryHookResult = ReturnType<typeof useGetProjectsByUserLazyQuery>;
 export type GetProjectsByUserQueryResult = Apollo.QueryResult<GetProjectsByUserQuery, GetProjectsByUserQueryVariables>;
-export const GetProjectRolesDocument = gql`
-    query getProjectRoles {
-  getProjectRoles {
-    id
-    name
-  }
-}
-    `;
-
-/**
- * __useGetProjectRolesQuery__
- *
- * To run a query within a React component, call `useGetProjectRolesQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetProjectRolesQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetProjectRolesQuery({
- *   variables: {
- *   },
- * });
- */
-export function useGetProjectRolesQuery(baseOptions?: Apollo.QueryHookOptions<GetProjectRolesQuery, GetProjectRolesQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetProjectRolesQuery, GetProjectRolesQueryVariables>(GetProjectRolesDocument, options);
-      }
-export function useGetProjectRolesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetProjectRolesQuery, GetProjectRolesQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetProjectRolesQuery, GetProjectRolesQueryVariables>(GetProjectRolesDocument, options);
-        }
-export type GetProjectRolesQueryHookResult = ReturnType<typeof useGetProjectRolesQuery>;
-export type GetProjectRolesLazyQueryHookResult = ReturnType<typeof useGetProjectRolesLazyQuery>;
-export type GetProjectRolesQueryResult = Apollo.QueryResult<GetProjectRolesQuery, GetProjectRolesQueryVariables>;

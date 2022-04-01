@@ -63,6 +63,14 @@ export default function ProjectDetails({
       </View>
 
       <View style={styles.section}>
+        <TouchableOpacity onPress={() => navigation.navigate("Taches", {
+          screen: "CreateTask",
+          params: { projectId: project.id },
+        })
+      }>
+          <Text>Créer une tâche</Text>
+        </TouchableOpacity>
+
         <Text style={styles.title}>Tâches associées</Text>
         <FlatList
           data={project.tasks}

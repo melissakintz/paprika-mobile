@@ -1,5 +1,6 @@
 import { createStackNavigator } from "@react-navigation/stack";
 import React from "react";
+import CreateTask from "../taskScreens/CreateTask";
 import OneTaskScreen from "../taskScreens/OneTaskScreen";
 import TaskScreen from "../taskScreens/TaskScreen";
 
@@ -17,6 +18,11 @@ export default function TaskStack() {
         <Stack.Screen
           name="OneTaskScreen"
           component={OneTaskScreen}
+          options={{ title: "Tâche" }}
+        />
+        <Stack.Screen
+          name="CreateTask"
+          component={CreateTask}
           options={{ title: "Tâche" }}
         />
       </Stack.Group>
