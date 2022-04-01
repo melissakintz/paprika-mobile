@@ -1,14 +1,14 @@
-import { FlatList, View, Text, StyleSheet, TouchableOpacity } from "react-native";
-import Ionicons from "@expo/vector-icons/Ionicons";
-import TaskProgress from "./TaskProgress";
-import NameCurrent from "./NameCurrent";
-import LastNameCurrent from "./LastNameCurrent";
+import { StyleSheet, View } from "react-native";
+import getUser from "../../utils/userUtils";
 import EmailCurrent from "./EmailCurrent";
+import LastNameCurrent from "./LastNameCurrent";
+import NameCurrent from "./NameCurrent";
 import RoleCurrent from "./RoleCurrent";
+import TaskProgress from "./TaskProgress";
 
 export default function ProfilScreen({ route }: object) {
   const { user } = route.params;
-  const currentUser = user.getUser;
+  const currentUser = getUser.getCurrentUser();
   return (
     <View style={styles.containerBig}>
       <View style={styles.container}>
