@@ -1,5 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import {
   Image,
   ScrollView,
@@ -7,6 +7,7 @@ import {
   Text,
   TouchableOpacity,
   View,
+  Animated
 } from "react-native";
 import { useGetCurrentUserQuery } from "../graphql/graphql";
 import getUser from "../utils/userUtils";
@@ -14,6 +15,31 @@ import CurrentProjectCard from "./components/homeComponent/CurrentProjectCard";
 import CurrentTaskCard from "./components/homeComponent/CurrentTaskCard";
 import HelpCard from "./components/homeComponent/HelpCard";
 import ProjectByRole from "./components/homeComponent/ProjectByRole";
+
+const FadeInView = (props) => {
+  const fadeAnim = useRef(new Animated.Value(0)).current
+
+  useEffect(() => {
+    Animated.timing(
+      fadeAnim,
+      {
+        toValue: 1,
+        duration: 10000,
+      }
+    ).start();
+  }, [fadeAnim])
+
+  return (
+    <Animated.View
+      style={{
+        ...props.style,
+        opacity: fadeAnim,
+      }}
+    >
+      {props.children}
+    </Animated.View>
+  );
+}
 
 export default function HomeScreen({ navigation }: any) {
   useEffect(() => {
@@ -52,11 +78,9 @@ export default function HomeScreen({ navigation }: any) {
           <>
             <TouchableOpacity
               style={styles.compteBtn}
-              onPress={() =>
-                navigation.navigate("ProfilScreen", { currentUser })
-              }
-            >
-              <Text style={{ color: "#F2F2F2" }}>Mon compte</Text>
+              onPress={() => navigation.navigate("ProfilScreen", { currentUser })}
+             >
+              <Text style={{ color: "#F2F2F2" }}>Mon profil</Text>
             </TouchableOpacity>
 
             <TouchableOpacity style={styles.logoutBtn} onPress={logout}>
@@ -72,8 +96,15 @@ export default function HomeScreen({ navigation }: any) {
         )}
       </TouchableOpacity>
       {/* <CalendarHome /> */}
-      <View style={styles.containerLogo}>
-        <Image style={styles.img} source={require("../assets/paprika1.png")} />
+      <View style={styles.containerLogo} >
+        <FadeInView style={styles.containerImageAnimated}>
+          <Image style={styles.img} source={require("../assets/paprika1.png")} />
+        </FadeInView>
+      </View>
+      <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+        <FadeInView style={styles.containerTextAnimated}>
+          <Text style={styles.textAnimated}>Paprika</Text>
+        </FadeInView>
       </View>
       <TouchableOpacity
         onPress={() => {
@@ -107,11 +138,8 @@ export default function HomeScreen({ navigation }: any) {
           </>
         ) : (
           <View style={styles.containerLogoModal}>
-            <Text style={styles.textModal}>Voir plus</Text>
-            <Image
-              style={styles.imgArrow}
-              source={require("../assets/arrowdown.png")}
-            />
+            <Text style={styles.textModal}>Tout les projets</Text>
+            <Image style={styles.imgArrow} source={require("../assets/arrowdown.png")} />
           </View>
         )}
       </TouchableOpacity>
@@ -238,6 +266,23 @@ const styles = StyleSheet.create({
     textTransform: "uppercase",
   },
   containerLogoModalAfter: {
-    paddingBottom: 50,
+    paddingBottom: 50
   },
+  textAnimated: {
+    fontSize: 28,
+    textAlign: 'center',
+    margin: 10,
+    color: '#f94545',
+    textDecorationStyle :"solid" ,
+    textDecorationColor: "#f94545"
+  },
+  containerTextAnimated: {
+    width: 250,
+    height: 70,
+    backgroundColor: 'grey'
+  },
+  containerImageAnimated: {
+    width: 250,
+    height: 300,
+  }
 });
