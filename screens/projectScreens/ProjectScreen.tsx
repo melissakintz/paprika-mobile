@@ -25,7 +25,6 @@ export default function ProjectScreen({
     fetchMore,
   } = useGetProjectsByUserQuery();
 
-console.log(error)
 
   return (
     <View style={styles.safeContainer}>
