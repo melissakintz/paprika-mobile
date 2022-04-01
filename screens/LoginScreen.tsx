@@ -7,45 +7,35 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  View,
+  View
 } from "react-native";
-import { RootStateOrAny, useDispatch, useSelector } from "react-redux";
 import { useLoginMutation } from "../graphql/graphql";
-import { loggedIn } from "../Redux/login";
-import { setUser } from "../Redux/user";
 import getUser from "../utils/userUtils";
 
 export default function LoginScreen() {
-  const dispatch = useDispatch();
   const [incorrectStyle, setIncorrectStyle] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigation = useNavigation();
-  const isLogged = useSelector((state: RootStateOrAny) => state.logged.value);
-  const [userExists, setUserExists] = useState(false);
 
   useEffect(() => {
     const userExists = async () => {
-      const user = await getUser();
-      if (user !== null) setUserExists(true);
+      const user = await getUser.getUserToken();
+      if (user !== null) navigation.navigate("HomeScreen");
     };
     userExists();
-  }, []);
-
-  useEffect(() => {
-    if (userExists || isLogged) navigation.navigate("HomeScreen");
-  }, [userExists, isLogged]);
+  });
 
   const [mutationLogin, { data: user }] = useLoginMutation();
   async function login() {
     await mutationLogin({
       variables: { userLoginInput: { email, password } },
-      onCompleted: async (e) => {
-        setIncorrectStyle(false);
-        dispatch(loggedIn());
-        dispatch(setUser(e.login.user));
-        await AsyncStorage.setItem("userId", e.login.user.id);
-        const unNom = await AsyncStorage.getItem("userId");
+      onCompleted: async (user) => {
+        try {
+          await AsyncStorage.setItem("@userToken", user.login.token);
+        } catch (e) {
+          console.error(e);
+        }
       },
       onError: () => {
         setIncorrectStyle(true);

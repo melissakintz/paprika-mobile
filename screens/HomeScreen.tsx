@@ -6,52 +6,35 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  View,
+  View
 } from "react-native";
-import { RootStateOrAny, useDispatch, useSelector } from "react-redux";
-import { useGetAllUsersQuery, useGetUserQuery } from "../graphql/graphql";
-import { loggedOut } from "../Redux/login";
 import getUser from "../utils/userUtils";
-import CalendarHome from "./components/homeComponent/Calendar";
 import CurrentProjectCard from "./components/homeComponent/CurrentProjectCard";
 import CurrentTaskCard from "./components/homeComponent/CurrentTaskCard";
 import HelpCard from "./components/homeComponent/HelpCard";
 import ProjectByRole from "./components/homeComponent/ProjectByRole";
 
 export default function HomeScreen({ navigation }: any) {
-  const dispatch = useDispatch();
-  const [userId, setUserId] = useState("");
-  const isLogged = useSelector((state: RootStateOrAny) => state.logged.value);
-
   useEffect(() => {
     const getUserId = async () => {
-      const user = await getUser();
-      if (user !== null) {
-        setUserId(user.id);
+      const user  = await getUser.getUserToken();
+      if (user == null) {
+        navigation.navigate("Login");
       }
     };
     getUserId();
-  }, [userId]);
+  }, []);
 
-  useEffect(() => {
-    if (!(userId || isLogged)) navigation.navigate("Login");
-  }, [isLogged, userId]);
 
   async function logout() {
-    dispatch(loggedOut());
-    await AsyncStorage.removeItem("userId");
+    await AsyncStorage.removeItem("@userToken");
     navigation.navigate("Login");
   }
 
   const [buttonConnection, setButtonConnection] = useState(false);
   const [modalCard, setModalCard] = useState(false);
-  const [taskList, setTaskList] = useState(false);
-  const currentUserTab = useGetAllUsersQuery();
-  const currentUser = currentUserTab.data?.getAllUsers[0].id;
 
-  const { data: user, error: errorUser } = useGetUserQuery({
-    variables: { userId: currentUser! },
-  });
+  const currentUser = getUser.getCurrentUser();
 
   return (
     <ScrollView>
@@ -69,7 +52,7 @@ export default function HomeScreen({ navigation }: any) {
           <>
             <TouchableOpacity
               style={styles.compteBtn}
-              onPress={() => navigation.navigate("ProfilScreen", { user })}
+              onPress={() => navigation.navigate("ProfilScreen", { currentUser })}
               >
               <Text style={{ color: "#F2F2F2" }}>Mon compte</Text>
             </TouchableOpacity>

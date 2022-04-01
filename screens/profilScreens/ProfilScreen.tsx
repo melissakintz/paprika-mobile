@@ -6,7 +6,7 @@ import InformationsUser from "./InformationsUser";
 
 export default function ProfilScreen({ route }: object) {
   const { user } = route.params;
-  const currentUser = user.getUser;
+  const currentUser = user.getCurrentUser();
   const {
     data: roleUser,
     error,

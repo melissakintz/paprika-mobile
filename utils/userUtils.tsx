@@ -1,10 +1,17 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { User } from "../graphql/graphql";
+import { useGetCurrentUserQuery } from "../graphql/graphql";
 
-export default async function getUser(): Promise<string | null> {
-  const userItem = await AsyncStorage.getItem("userId");
+async function getUserToken(): Promise<string | null> {
+  const userItem = await AsyncStorage.getItem("@userToken");
   if (userItem) {
     return userItem;
   }
   return null;
 }
+
+function getCurrentUser() {
+  const { data: currentUser, error: errorUser } = useGetCurrentUserQuery();
+  return currentUser
+}
+
+export default {getUserToken, getCurrentUser};
