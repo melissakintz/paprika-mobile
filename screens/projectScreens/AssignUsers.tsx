@@ -52,7 +52,6 @@ const AssignBox = ({ project }: { project: Project }): JSX.Element => {
         variables: { projectId: project.id, usersRoles: assignees },
         refetchQueries: ["GetProjectById"],
         onCompleted: () => {
-          console.log("complete");
           navigation.goBack();
         },
         onError: () => {

@@ -28,7 +28,7 @@ const authLink = setContext(async (_, { headers }) => {
   return {
     headers: {
       ...headers,
-      authorization: token ? `Bearer ${token}` : undefined,
+      Authorization: token ? `Bearer ${token}` : undefined,
     },
   };
 });
@@ -78,13 +78,16 @@ function App() {
   return (
     <ApolloProvider client={client}>
       <NavigationContainer>
-        <Stack.Navigator screenOptions={{ headerShown: false }}>
-          <Stack.Group>
-            <Stack.Screen name="Home" component={TabNavigator} />
-          </Stack.Group>
-          <Stack.Group>
-            <Stack.Screen name="Login" component={LoginStack} />
-          </Stack.Group>
+        <Stack.Navigator
+          screenOptions={{ headerShown: false }}
+          initialRouteName="Login"
+        >
+          <Stack.Screen name="Home" component={TabNavigator} />
+          <Stack.Screen
+            name="Login"
+            component={LoginStack}
+            options={{ gestureEnabled: false }}
+          />
         </Stack.Navigator>
       </NavigationContainer>
     </ApolloProvider>
