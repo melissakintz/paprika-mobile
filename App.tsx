@@ -18,9 +18,10 @@ import ProjectStack from "./screens/navigation/ProjectStack";
 import TaskStack from "./screens/navigation/TaskStack";
 import store from "./store";
 import getUser from "./utils/userUtils";
+import {API_URL} from 'react-native-dotenv';
 
 
-const link = new HttpLink({ uri: "http://192.168.1.21:4000/graphql" });
+const link = new HttpLink({ uri: API_URL });
 
 const authLink = setContext(async (_, { headers }) => {
   const user: string | null = await getUser.getUserToken();
