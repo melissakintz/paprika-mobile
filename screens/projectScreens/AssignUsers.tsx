@@ -1,7 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import { RouteProp, useNavigation } from "@react-navigation/native";
 import React, { useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
 import BouncyCheckbox from "react-native-bouncy-checkbox";
 import { FlatList } from "react-native-gesture-handler";
 import { Button } from "react-native-paper";
@@ -26,16 +26,17 @@ export default function AssignUsers({
       <Text style={styles.client}>
         <Ionicons name="person" /> {project.client}
       </Text>
-      <CreateForm project={project} />
+      <AssignBox project={project} />
     </ProjectContainer>
   );
 }
 
-const CreateForm = ({ project }: { project: Project }): JSX.Element => {
+const AssignBox = ({ project }: { project: Project }): JSX.Element => {
   const navigation = useNavigation();
   const { data: users } = useGetAllUsersQuery();
   const { data: roles } = useGetProjectRolesQuery();
-  const [assignUsers] = useAssignUsersToProjectMutation({
+  const [error, setError] = useState(false);
+  const [assignUsers, { loading }] = useAssignUsersToProjectMutation({
     refetchQueries: ["GetProjectsByUser"],
   });
   const [assignees, setAssignees] = useState<
@@ -53,15 +54,22 @@ const CreateForm = ({ project }: { project: Project }): JSX.Element => {
   const handleValidation = async () => {
     assignUsers({
       variables: { projectId: project.id, usersRoles: assignees },
+      refetchQueries: ["GetProjectById"],
+      onCompleted: () => {
+        navigation.goBack();
+      },
+      onError: () => {
+        setError(true);
+      },
     });
-    navigation.goBack();
   };
 
   return (
-    <View>
+    <View style={{ flex: 1 }}>
       <FlatList
         scrollEnabled
         data={users?.getAllUsers}
+        keyExtractor={(user) => user.id}
         renderItem={(user) => (
           <View style={styles.list}>
             <Text style={styles.title}>
@@ -71,6 +79,7 @@ const CreateForm = ({ project }: { project: Project }): JSX.Element => {
             <FlatList
               horizontal={true}
               data={roles?.getProjectRoles}
+              keyExtractor={(_role, index) => index.toString()}
               renderItem={(role) => (
                 <BouncyCheckbox
                   size={25}
@@ -88,8 +97,9 @@ const CreateForm = ({ project }: { project: Project }): JSX.Element => {
         )}
       />
       <Button color="green" onPress={handleValidation}>
-        Valider
+        {loading ? <ActivityIndicator /> : "Valider"}
       </Button>
+      {error && <Text>Une erreur est servenue ...</Text>}
     </View>
   );
 };

@@ -1,4 +1,5 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
+import { useTheme } from "@react-navigation/native";
 import React from "react";
 import {
   FlatList,
@@ -8,6 +9,7 @@ import {
   View,
 } from "react-native";
 import { useGetAllTasksQuery } from "../../graphql/graphql";
+import theme from "../../styles/theme";
 
 export default function TaskScreen({ navigation }: any) {
   const { data: tasks } = useGetAllTasksQuery();
@@ -77,15 +79,15 @@ const styles = StyleSheet.create({
     borderLeftWidth: 16,
   },
   done: {
-    backgroundColor: "#ffcad4",
+    backgroundColor: theme.colors.done,
     borderLeftColor: "#FF5C7A",
   },
   inprogress: {
-    backgroundColor: "#ffe5d9",
+    backgroundColor: theme.colors.inprogress,
     borderLeftColor: "#FF8F5C",
   },
   open: {
-    backgroundColor: "#d8e2dc",
+    backgroundColor: theme.colors.open,
     borderLeftColor: "#7EA08B",
   },
   firstRow: {

@@ -2,7 +2,7 @@ import {
   ApolloClient,
   ApolloProvider,
   HttpLink,
-  InMemoryCache
+  InMemoryCache,
 } from "@apollo/client";
 import { setContext } from "@apollo/client/link/context";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -11,24 +11,25 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import React from "react";
 import { AppRegistry } from "react-native";
+import { Provider as PaperProvider } from "react-native-paper";
 import { Provider } from "react-redux";
 import HomeStack from "./screens/navigation/HomeStack";
 import LoginStack from "./screens/navigation/LoginStack";
 import ProjectStack from "./screens/navigation/ProjectStack";
 import TaskStack from "./screens/navigation/TaskStack";
 import store from "./store";
+import theme from "./styles/theme";
 import getUser from "./utils/userUtils";
 import {API_URL} from 'react-native-dotenv';
-
 
 const link = new HttpLink({ uri: API_URL });
 
 const authLink = setContext(async (_, { headers }) => {
-  const user: string | null = await getUser.getUserToken();
+  const token: string | null = await getUser.getUserToken();
   return {
     headers: {
       ...headers,
-      authorization: user ? `Bearer ${user}` : undefined,
+      Authorization: token ? `Bearer ${token}` : undefined,
     },
   };
 });
@@ -78,25 +79,30 @@ function App() {
   return (
     <ApolloProvider client={client}>
       <NavigationContainer>
-        <Stack.Navigator screenOptions={{ headerShown: false }}>
-          <Stack.Group>
-            <Stack.Screen name="Home" component={TabNavigator} />
-          </Stack.Group>
-          <Stack.Group>
-            <Stack.Screen name="Login" component={LoginStack} />
-          </Stack.Group>
+        <Stack.Navigator
+          screenOptions={{ headerShown: false }}
+          initialRouteName="Login"
+        >
+          <Stack.Screen name="Home" component={TabNavigator} />
+          <Stack.Screen
+            name="Login"
+            component={LoginStack}
+            options={{ gestureEnabled: false }}
+          />
         </Stack.Navigator>
       </NavigationContainer>
     </ApolloProvider>
   );
 }
 
-export default function AppWrapper() {
+export default function Main() {
   return (
     <Provider store={store}>
-      <App />
+      <PaperProvider theme={theme}>
+        <App />
+      </PaperProvider>
     </Provider>
   );
 }
 
-AppRegistry.registerComponent("Paprika", () => AppWrapper);
+AppRegistry.registerComponent("Paprika", () => Main);

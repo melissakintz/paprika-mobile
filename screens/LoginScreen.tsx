@@ -1,5 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useNavigation } from "@react-navigation/native";
+import { CommonActions, useNavigation } from "@react-navigation/native";
 import React, { useEffect, useState } from "react";
 import {
   Image,
@@ -7,7 +7,7 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  View
+  View,
 } from "react-native";
 import { useLoginMutation } from "../graphql/graphql";
 import getUser from "../utils/userUtils";
@@ -21,21 +21,31 @@ export default function LoginScreen() {
   useEffect(() => {
     const userExists = async () => {
       const user = await getUser.getUserToken();
-      if (user !== null) navigation.navigate("HomeScreen");
+      if (!!user)
+        navigation.dispatch(
+          CommonActions.reset({
+            index: 0,
+            routes: [{ name: "Home" }],
+          })
+        );
     };
     userExists();
   });
 
-  const [mutationLogin, { data: user }] = useLoginMutation();
+  const [mutationLogin] = useLoginMutation();
   async function login() {
-    await mutationLogin({
+    mutationLogin({
       variables: { userLoginInput: { email, password } },
       onCompleted: async (user) => {
-        try {
-          await AsyncStorage.setItem("@userToken", user.login.token);
-        } catch (e) {
-          console.error(e);
-        }
+        setIncorrectStyle(false);
+        await AsyncStorage.setItem("@userToken", user.login.token);
+
+        navigation.dispatch(
+          CommonActions.reset({
+            index: 0,
+            routes: [{ name: "Home" }],
+          })
+        );
       },
       onError: () => {
         setIncorrectStyle(true);
