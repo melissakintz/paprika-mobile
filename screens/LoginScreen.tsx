@@ -24,8 +24,9 @@ export default function LoginScreen() {
       if (user !== null) navigation.navigate("HomeScreen");
     };
     userExists();
-  }, []);
-  const [mutationLogin] = useLoginMutation();
+  });
+
+  const [mutationLogin, { data: user }] = useLoginMutation();
   async function login() {
       mutationLogin({
         variables: { userLoginInput: { email, password } },
