@@ -5,7 +5,12 @@ import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
 import BouncyCheckbox from "react-native-bouncy-checkbox";
 import { FlatList } from "react-native-gesture-handler";
 import { Button } from "react-native-paper";
-import { Project, useAssignUsersToProjectMutation, useGetAllUsersQuery, useGetProjectRolesQuery } from "../../graphql/graphql";
+import {
+  Project,
+  useAssignUsersToProjectMutation,
+  useGetAllUsersQuery,
+  useGetProjectRolesQuery,
+} from "../../graphql/graphql";
 import ProjectContainer from "../components/projectComponent/ProjectContainer";
 
 export default function AssignUsers({
@@ -47,20 +52,16 @@ const AssignBox = ({ project }: { project: Project }): JSX.Element => {
   };
 
   const handleValidation = async () => {
-    try {
-      assignUsers({
-        variables: { projectId: project.id, usersRoles: assignees },
-        refetchQueries: ["GetProjectById"],
-        onCompleted: () => {
-          navigation.goBack();
-        },
-        onError: () => {
-          setError(true);
-        },
-      });
-    } catch {
-      console.log("error");
-    }
+    assignUsers({
+      variables: { projectId: project.id, usersRoles: assignees },
+      refetchQueries: ["GetProjectById"],
+      onCompleted: () => {
+        navigation.goBack();
+      },
+      onError: () => {
+        setError(true);
+      },
+    });
   };
 
   return (
@@ -78,7 +79,7 @@ const AssignBox = ({ project }: { project: Project }): JSX.Element => {
             <FlatList
               horizontal={true}
               data={roles?.getProjectRoles}
-              keyExtractor={(role) => role.id}
+              keyExtractor={(_role, index) => index.toString()}
               renderItem={(role) => (
                 <BouncyCheckbox
                   size={25}
@@ -98,6 +99,7 @@ const AssignBox = ({ project }: { project: Project }): JSX.Element => {
       <Button color="green" onPress={handleValidation}>
         {loading ? <ActivityIndicator /> : "Valider"}
       </Button>
+      {error && <Text>Une erreur est servenue ...</Text>}
     </View>
   );
 };

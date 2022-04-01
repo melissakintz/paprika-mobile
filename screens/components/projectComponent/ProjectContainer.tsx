@@ -21,7 +21,6 @@ const styles = StyleSheet.create({
     width: "100%",
     backgroundColor: "white",
     padding: 20,
-    marginVertical: 10,
   },
   header: {
     height: 2,

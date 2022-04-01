@@ -20,6 +20,7 @@ export default function ProjectScreen() {
     loading,
     fetchMore,
   } = useGetProjectsByUserQuery();
+
   return (
     <View style={styles.safeContainer}>
       <FlatList
