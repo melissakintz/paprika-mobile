@@ -1,19 +1,27 @@
 import { FlatList, View, Text, StyleSheet, TouchableOpacity } from "react-native";
-import { useGetUserQuery, useGetAllUsersQuery } from "../../graphql/graphql";
+import { useGetUserQuery, useGetAllUsersQuery, useGetProjectRolesQuery } from "../../graphql/graphql";
 
-export default function RoleCurrent() {
-  const currentUserTab = useGetAllUsersQuery();
-  const currentUser = currentUserTab.data?.getAllUsers[0].id;
-  const { data: user, error: errorUser } = useGetUserQuery({
-      variables: { userId: currentUser! },
-  });
+export default function RoleCurrentProject() {
+
+  const {
+    data: roleUser,
+    error,
+  } = useGetProjectRolesQuery();
     return (
         <View style={styles.containerList}>
             <View>
-                <Text style={[styles.textAlignLeft, styles.textSize , styles.textUnderline]}>Status: </Text>
+                <Text style={[styles.textAlignLeft, styles.textSize , styles.textUnderline]}>Rôle: </Text>
             </View>
             <View>
-                <Text style={styles.textAlignRight}>{currentUserTab.data?.getAllUsers[0].role}</Text>
+            <FlatList
+            data={roleUser?.getProjectRoles}
+            renderItem={(project) => (
+              <View>
+                <Text >{project.item?.name}</Text>
+              </View>
+            )}      
+            ListEmptyComponent={() => <Text>Pas de rôle assigné</Text>}
+          />
             </View>
         </View>
   )

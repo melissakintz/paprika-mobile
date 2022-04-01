@@ -41,6 +41,9 @@ export default function taskProgress() {
           setmodalProject(false)
         } else {
           setmodalProject(true)
+          if (modalTask == true) {
+            setmodalTask(false)
+          }
         }
       }}>
         {modalProject? (
@@ -68,6 +71,9 @@ export default function taskProgress() {
           setmodalTask(false)
         } else {
           setmodalTask(true)
+          if (modalProject == true) {
+            setmodalProject(false)
+          }
         }
       }}>
         {modalTask? (

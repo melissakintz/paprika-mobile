@@ -5,6 +5,7 @@ import NameCurrent from "./NameCurrent";
 import LastNameCurrent from "./LastNameCurrent";
 import EmailCurrent from "./EmailCurrent";
 import RoleCurrent from "./RoleCurrent";
+import RoleCurrentProject from "./RoleProject";
 
 export default function ProfilScreen({ route }: object) {
   const { user } = route.params;
@@ -16,6 +17,7 @@ export default function ProfilScreen({ route }: object) {
         <LastNameCurrent />
         <EmailCurrent />
         <RoleCurrent />
+        <RoleCurrentProject />
       </View>
     <TaskProgress />
 
