@@ -3,29 +3,32 @@ import { RouteProp, useNavigation } from "@react-navigation/native";
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { FlatList, TouchableOpacity } from "react-native-gesture-handler";
-import { Project, Task } from "../../graphql/graphql";
+import { Task, useGetProjectByIdQuery } from "../../graphql/graphql";
 import getUser from "../../utils/userUtils";
 import ProjectContainer from "../components/projectComponent/ProjectContainer";
 
 export default function ProjectDetails({
   route,
 }: {
-  route: RouteProp<{ params: { project: Project } }, "params">;
+  route: RouteProp<{ params: { projectId: string } }, "params">;
 }): JSX.Element {
-  const { project } = route.params;
   const currentUser = getUser.getCurrentUser();
+  const { projectId } = route.params;
   const navigation = useNavigation();
+  const { data: project } = useGetProjectByIdQuery({
+    variables: { projectId: projectId },
+  });
 
   return (
     <ProjectContainer>
       <View style={styles.section}>
-        <Text style={styles.title}>{project.name}</Text>
+        <Text style={styles.title}>{project?.getProjectById?.name}</Text>
         <Text style={styles.client}>
-          <Ionicons name="person" /> {project.client}
+          <Ionicons name="person" /> {project?.getProjectById?.client}
         </Text>
         <View style={styles.dates}>
           <View style={styles.date}>
-            <Text>Début: {toLocaleDate(project.startAt)}</Text>
+            <Text>Début: {toLocaleDate(project?.getProjectById?.startAt)}</Text>
           </View>
           <Ionicons name="calendar-outline" size={30} />
 
@@ -33,29 +36,31 @@ export default function ProjectDetails({
             style={[
               styles.date,
               {
-                backgroundColor: moreThanNow(project.endAt)
+                backgroundColor: moreThanNow(project?.getProjectById?.endAt)
                   ? "#ff726f"
                   : "lightgreen",
               },
             ]}
           >
-            <Text>Fin: {toLocaleDate(project.endAt)}</Text>
+            <Text>Fin: {toLocaleDate(project?.getProjectById?.endAt)}</Text>
           </View>
         </View>
-        <Text style={styles.description}>{project.description}</Text>
+        <Text style={styles.description}>
+          {project?.getProjectById?.description}
+        </Text>
       </View>
       <View style={styles.section}>
         <Text style={styles.title}>Personnes associées</Text>
         <FlatList
           horizontal={true}
-          data={project.participants}
+          data={project?.getProjectById?.participants}
+          keyExtractor={(_userProject, index) => index.toString()}
           renderItem={(user) => (
             <View style={styles.worker}>
               <Text>{user.item?.user?.email}</Text>
             </View>
           )}
           ListEmptyComponent={() => <Text>Pas encore de participants</Text>}
-          keyExtractor={(userProject) => userProject?.user?.id}
         />
         <View style={styles.workers}></View>
       </View>
@@ -63,10 +68,10 @@ export default function ProjectDetails({
       <View style={styles.section}>
         <Text style={styles.title}>Tâches associées</Text>
         <FlatList
-          data={project.tasks}
+          data={project?.getProjectById?.tasks}
           renderItem={(task) => <TaskCard task={task.item} />}
           ListEmptyComponent={() => <Text>Acunes tâches pour le moment</Text>}
-          keyExtractor={(task) => task?.id}
+          keyExtractor={(_task, index) => index.toString()}
         />
       </View>
       <View style={{ flex: 1 }} />

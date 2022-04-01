@@ -6,8 +6,9 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  View
+  View,
 } from "react-native";
+import { useGetCurrentUserQuery } from "../graphql/graphql";
 import getUser from "../utils/userUtils";
 import CurrentProjectCard from "./components/homeComponent/CurrentProjectCard";
 import CurrentTaskCard from "./components/homeComponent/CurrentTaskCard";
@@ -17,14 +18,13 @@ import ProjectByRole from "./components/homeComponent/ProjectByRole";
 export default function HomeScreen({ navigation }: any) {
   useEffect(() => {
     const getUserId = async () => {
-      const user  = await getUser.getUserToken();
+      const user = await getUser.getUserToken();
       if (user == null) {
         navigation.navigate("Login");
       }
     };
     getUserId();
   }, []);
-
 
   async function logout() {
     await AsyncStorage.removeItem("@userToken");
@@ -39,28 +39,27 @@ export default function HomeScreen({ navigation }: any) {
   return (
     <ScrollView>
       <TouchableOpacity
-      style={styles.container}
-      onPress={() => {
-        if(buttonConnection == true) {
-          setButtonConnection(false)
-        } else {
-          setButtonConnection(true)
-        }
-      }}
+        style={styles.container}
+        onPress={() => {
+          if (buttonConnection == true) {
+            setButtonConnection(false);
+          } else {
+            setButtonConnection(true);
+          }
+        }}
       >
         {buttonConnection ? (
           <>
             <TouchableOpacity
               style={styles.compteBtn}
-              onPress={() => navigation.navigate("ProfilScreen", { currentUser })}
-              >
+              onPress={() =>
+                navigation.navigate("ProfilScreen", { currentUser })
+              }
+            >
               <Text style={{ color: "#F2F2F2" }}>Mon compte</Text>
             </TouchableOpacity>
-  
-            <TouchableOpacity
-              style={styles.logoutBtn}
-              onPress={logout}
-            >
+
+            <TouchableOpacity style={styles.logoutBtn} onPress={logout}>
               <Text style={{ color: "#F2F2F2" }}>Déconnexion</Text>
             </TouchableOpacity>
           </>
@@ -71,27 +70,34 @@ export default function HomeScreen({ navigation }: any) {
             <View style={styles.menuButtonLogin}></View>
           </View>
         )}
-
       </TouchableOpacity>
       {/* <CalendarHome /> */}
-      <View style={styles.containerLogo} >
+      <View style={styles.containerLogo}>
         <Image style={styles.img} source={require("../assets/paprika1.png")} />
       </View>
       <TouchableOpacity
         onPress={() => {
           if (modalCard == true) {
-            setModalCard(false)
+            setModalCard(false);
           } else {
-            setModalCard(true)
+            setModalCard(true);
           }
         }}
       >
         {modalCard ? (
           <>
             <View style={styles.viewContainer}>
-              <View style={[ styles.containerLogoModal, styles.containerLogoModalAfter ]}>
+              <View
+                style={[
+                  styles.containerLogoModal,
+                  styles.containerLogoModalAfter,
+                ]}
+              >
                 <Text style={styles.textModal}>Voir moins</Text>
-                <Image style={styles.imgArrowRotate} source={require("../assets/arrowdown.png")} />
+                <Image
+                  style={styles.imgArrowRotate}
+                  source={require("../assets/arrowdown.png")}
+                />
               </View>
               <HelpCard />
               <CurrentProjectCard />
@@ -102,11 +108,13 @@ export default function HomeScreen({ navigation }: any) {
         ) : (
           <View style={styles.containerLogoModal}>
             <Text style={styles.textModal}>Voir plus</Text>
-            <Image style={styles.imgArrow} source={require("../assets/arrowdown.png")} />
+            <Image
+              style={styles.imgArrow}
+              source={require("../assets/arrowdown.png")}
+            />
           </View>
         )}
       </TouchableOpacity>
-
     </ScrollView>
   );
 }
@@ -125,7 +133,7 @@ const styles = StyleSheet.create({
     alignItems: "flex-end",
     backgroundColor: "transparent",
     width: 100,
-    height: 100
+    height: 100,
   },
   menuButtonLogin: {
     width: 35,
@@ -134,7 +142,7 @@ const styles = StyleSheet.create({
     backgroundColor: "black",
     marginBottom: 10,
     paddingRight: 10,
-    marginRight: 20
+    marginRight: 20,
   },
   containerText: {
     marginLeft: "auto",
@@ -169,13 +177,13 @@ const styles = StyleSheet.create({
   },
   img: {
     flex: 1,
-    width: "auto"
+    width: "auto",
   },
   containerLogo: {
     width: 200,
     marginTop: -30,
     marginLeft: "auto",
-    marginRight: "auto"
+    marginRight: "auto",
   },
   container: {
     display: "flex",
@@ -215,23 +223,21 @@ const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "row",
     justifyContent: "space-evenly",
-    paddingTop: 50
+    paddingTop: 50,
   },
   imgArrow: {
     width: 20,
-    height: "auto"
+    height: "auto",
   },
   imgArrowRotate: {
     width: 20,
     height: "auto",
-    transform: [
-      { rotate: "180deg"}
-    ]
+    transform: [{ rotate: "180deg" }],
   },
   textModal: {
-    textTransform: "uppercase"
+    textTransform: "uppercase",
   },
   containerLogoModalAfter: {
-    paddingBottom: 50
-  }
+    paddingBottom: 50,
+  },
 });

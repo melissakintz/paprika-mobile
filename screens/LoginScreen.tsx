@@ -7,7 +7,7 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  View
+  View,
 } from "react-native";
 import { useLoginMutation } from "../graphql/graphql";
 import getUser from "../utils/userUtils";
@@ -25,22 +25,18 @@ export default function LoginScreen() {
     };
     userExists();
   }, []);
-
-  const [mutationLogin, { data: user }] = useLoginMutation();
+  const [mutationLogin] = useLoginMutation();
   async function login() {
-    await mutationLogin({
-      variables: { userLoginInput: { email, password } },
-      onCompleted: async (user) => {
-        try {
+      mutationLogin({
+        variables: { userLoginInput: { email, password } },
+        onCompleted: async (user) => {
+          setIncorrectStyle(false);
           await AsyncStorage.setItem("@userToken", user.login.token);
-        } catch (e) {
-          console.error(e);
-        }
-      },
-      onError: () => {
-        setIncorrectStyle(true);
-      },
-    });
+        },
+        onError: () => {
+          setIncorrectStyle(true);
+        },
+      });
   }
 
   return (

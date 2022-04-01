@@ -16,12 +16,10 @@ import theme from "../../styles/theme";
 export default function ProjectScreen() {
   const {
     data: projects,
-    error,
     refetch,
     loading,
     fetchMore,
   } = useGetProjectsByUserQuery();
-
   return (
     <View style={styles.safeContainer}>
       <FlatList
@@ -50,7 +48,7 @@ const ProjectCard = ({ project }: { project: Project }): JSX.Element => {
         <Pressable
           style={styles.card}
           onPress={() =>
-            navigation.navigate("ProjetDetails", { project: project })
+            navigation.navigate("ProjetDetails", { projectId: project.id })
           }
         >
           <View style={styles.header} />

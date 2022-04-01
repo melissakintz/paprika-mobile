@@ -11,7 +11,8 @@ async function getUserToken(): Promise<string | null> {
 
 function getCurrentUser() {
   const { data: currentUser, error: errorUser } = useGetCurrentUserQuery();
-  return currentUser
+  if (errorUser) console.log(errorUser);
+  return currentUser;
 }
 
-export default {getUserToken, getCurrentUser};
+export default { getUserToken, getCurrentUser };
