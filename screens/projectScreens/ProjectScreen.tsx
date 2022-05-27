@@ -26,13 +26,13 @@ export default function ProjectScreen() {
       <FlatList
         contentContainerStyle={styles.container}
         data={projects?.getProjectsByUser}
-        renderItem={(project) => <ProjectCard project={project.item} />}
+        renderItem={({ item }) => <ProjectCard project={item} />}
         ListEmptyComponent={() => <Text>pas de projets en cours</Text>}
         onRefresh={refetch}
         refreshing={loading}
         onEndReached={() => fetchMore}
         initialNumToRender={5}
-        keyExtractor={(project) => project.id}
+        keyExtractor={(project) => project!.id}
       />
     </View>
   );

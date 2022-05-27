@@ -88,7 +88,7 @@ const AssignBox = ({ project }: { project: Project }): JSX.Element => {
                   text={`${role.item?.name}`}
                   iconStyle={{ borderColor: "orange" }}
                   onPress={(isChecked: boolean) => {
-                    handlePress(isChecked, user.item.id, role.item.id);
+                    handlePress(isChecked, user.item.id, role?.item?.id);
                   }}
                 />
               )}

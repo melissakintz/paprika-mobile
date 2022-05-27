@@ -3,6 +3,7 @@ import { CommonActions, useNavigation } from "@react-navigation/native";
 import React, { useEffect, useState } from "react";
 import {
   Image,
+  KeyboardAvoidingView,
   StyleSheet,
   Text,
   TextInput,
@@ -54,7 +55,7 @@ export default function LoginScreen() {
   }
 
   return (
-    <View style={styles.container}>
+    <KeyboardAvoidingView style={styles.container} behavior={"padding"}>
       <Image source={require("../assets/paprika1.png")} />
       <View style={styles.inputView}>
         <TextInput
@@ -68,7 +69,6 @@ export default function LoginScreen() {
           autoCapitalize="none"
         />
       </View>
-
       <View style={styles.inputView}>
         <TextInput
           style={styles.TextInput}
@@ -87,7 +87,7 @@ export default function LoginScreen() {
       <TouchableOpacity style={styles.loginBtn} onPress={login}>
         <Text style={{ color: "#F2F2F2" }}>Connexion</Text>
       </TouchableOpacity>
-    </View>
+    </KeyboardAvoidingView>
   );
 }
 
@@ -97,6 +97,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#C9BFBF",
     alignItems: "center",
     justifyContent: "center",
+    paddingBottom: 1,
   },
   image: {
     marginBottom: 40,
