@@ -37,9 +37,9 @@ export default function LoginScreen() {
   async function login() {
     mutationLogin({
       variables: { userLoginInput: { email, password } },
-      onCompleted: async (user) => {
+      onCompleted: async ({ login }) => {
         setIncorrectStyle(false);
-        await AsyncStorage.setItem("@userToken", user.login.token);
+        await AsyncStorage.setItem("@userToken", login.token);
 
         navigation.dispatch(
           CommonActions.reset({
