@@ -24,7 +24,7 @@ export default function AssignUsers({
     <ProjectContainer>
       <Text style={styles.title}>{project.name}</Text>
       <Text style={styles.client}>
-        <Ionicons name="person" /> {project.client}
+        <Ionicons name="person" size={30} /> {project.client}
       </Text>
       <AssignBox project={project} />
     </ProjectContainer>
@@ -77,11 +77,13 @@ const AssignBox = ({ project }: { project: Project }): JSX.Element => {
               {user.item.email}
             </Text>
             <FlatList
-              horizontal={true}
+              numColumns={2}
+              columnWrapperStyle={styles.columnWrapper}
               data={roles?.getProjectRoles}
               keyExtractor={(_role, index) => index.toString()}
               renderItem={(role) => (
                 <BouncyCheckbox
+                  textStyle={styles.checkbox}
                   size={25}
                   fillColor="orange"
                   unfillColor="#FFFFFF"
@@ -116,6 +118,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     marginBottom: 10,
     alignItems: "center",
+    justifyContent: "center",
   },
   workers: {
     flexDirection: "row",
@@ -134,5 +137,9 @@ const styles = StyleSheet.create({
   },
   list: {
     marginVertical: 20,
+  },
+  columnWrapper: {
+    paddingHorizontal: 20,
+    justifyContent: "space-between",
   },
 });
