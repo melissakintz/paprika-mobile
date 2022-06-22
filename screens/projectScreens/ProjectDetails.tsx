@@ -21,60 +21,66 @@ export default function ProjectDetails({
 
   return (
     <ProjectContainer>
-      <View style={styles.section}>
-        <Text style={styles.title}>{project?.getProjectById?.name}</Text>
-        <Text style={styles.client}>
-          <Ionicons name="person" /> {project?.getProjectById?.client}
-        </Text>
-        <View style={styles.dates}>
-          <View style={styles.date}>
-            <Text>Début: {toLocaleDate(project?.getProjectById?.startAt)}</Text>
-          </View>
-          <Ionicons name="calendar-outline" size={30} />
+      <View style={{ flex: 1 }}>
+        <View style={styles.section}>
+          <Text style={styles.title}>{project?.getProjectById?.name}</Text>
+          <Text style={styles.client}>
+            <Ionicons name="person" /> {project?.getProjectById?.client}
+          </Text>
+          <View style={styles.dates}>
+            <View style={styles.date}>
+              <Text>
+                Début: {toLocaleDate(project?.getProjectById?.startAt)}
+              </Text>
+            </View>
+            <Ionicons name="calendar-outline" size={30} />
 
-          <View
-            style={[
-              styles.date,
-              {
-                backgroundColor: moreThanNow(project?.getProjectById?.endAt)
-                  ? "#ff726f"
-                  : "lightgreen",
-              },
-            ]}
-          >
-            <Text>Fin: {toLocaleDate(project?.getProjectById?.endAt)}</Text>
+            <View
+              style={[
+                styles.date,
+                {
+                  backgroundColor: moreThanNow(project?.getProjectById?.endAt)
+                    ? "#ff726f"
+                    : "lightgreen",
+                },
+              ]}
+            >
+              <Text>Fin: {toLocaleDate(project?.getProjectById?.endAt)}</Text>
+            </View>
+          </View>
+          <Text style={styles.description}>
+            {project?.getProjectById?.description}
+          </Text>
+        </View>
+        <View style={styles.section}>
+          <Text style={styles.title}>Personnes associées</Text>
+          <FlatList
+            horizontal={true}
+            data={project?.getProjectById?.participants}
+            keyExtractor={(_userProject, index) => index.toString()}
+            renderItem={(user) => (
+              <View style={styles.worker}>
+                <Text>{user.item?.user?.email}</Text>
+              </View>
+            )}
+            ListEmptyComponent={() => <Text>Pas encore de participants</Text>}
+          />
+          <View style={styles.workers}></View>
+        </View>
+        <View style={{ flex: 1 }}>
+          <View style={styles.section}>
+            <Text style={styles.title}>Tâches associées</Text>
+            <FlatList
+              data={project?.getProjectById?.tasks}
+              renderItem={(task) => <TaskCard task={task.item} />}
+              ListEmptyComponent={() => (
+                <Text>Acunes tâches pour le moment</Text>
+              )}
+              keyExtractor={(_task, index) => index.toString()}
+            />
           </View>
         </View>
-        <Text style={styles.description}>
-          {project?.getProjectById?.description}
-        </Text>
       </View>
-      <View style={styles.section}>
-        <Text style={styles.title}>Personnes associées</Text>
-        <FlatList
-          horizontal={true}
-          data={project?.getProjectById?.participants}
-          keyExtractor={(_userProject, index) => index.toString()}
-          renderItem={(user) => (
-            <View style={styles.worker}>
-              <Text>{user.item?.user?.email}</Text>
-            </View>
-          )}
-          ListEmptyComponent={() => <Text>Pas encore de participants</Text>}
-        />
-        <View style={styles.workers}></View>
-      </View>
-
-      <View style={styles.section}>
-        <Text style={styles.title}>Tâches associées</Text>
-        <FlatList
-          data={project?.getProjectById?.tasks}
-          renderItem={(task) => <TaskCard task={task.item} />}
-          ListEmptyComponent={() => <Text>Acunes tâches pour le moment</Text>}
-          keyExtractor={(_task, index) => index.toString()}
-        />
-      </View>
-      <View style={{ flex: 1 }} />
       {currentUser?.getCurrentUser?.role !== "USER" ? (
         <TouchableOpacity
           style={styles.button}
@@ -93,6 +99,7 @@ export default function ProjectDetails({
     </ProjectContainer>
   );
 }
+
 const TaskCard = ({ task }: { task: Task }) => {
   const navigation = useNavigation();
   return (
@@ -121,7 +128,6 @@ const TaskCard = ({ task }: { task: Task }) => {
         />
         <Text style={styles.taskText}>{task.name}</Text>
       </View>
-
       <View
         style={[
           styles.taskBadge,
@@ -219,5 +225,9 @@ const styles = StyleSheet.create({
     borderRadius: 100,
     alignSelf: "center",
     justifyContent: "flex-end",
+    shadowColor: "#171717",
+    shadowOffset: { width: -2, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 3,
   },
 });

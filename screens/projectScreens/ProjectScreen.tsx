@@ -1,7 +1,8 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useNavigation } from "@react-navigation/native";
-import React from "react";
+import React, { useRef } from "react";
 import {
+  Alert,
   FlatList,
   Pressable,
   StyleSheet,
@@ -10,8 +11,14 @@ import {
   View,
 } from "react-native";
 import { Swipeable } from "react-native-gesture-handler";
-import { Project, useGetProjectsByUserQuery } from "../../graphql/graphql";
+import {
+  Project,
+  RoleSite,
+  useDeleteProjectMutation,
+  useGetProjectsByUserQuery,
+} from "../../graphql/graphql";
 import theme from "../../styles/theme";
+import userUtils from "../../utils/userUtils";
 
 export default function ProjectScreen() {
   const {
@@ -26,13 +33,13 @@ export default function ProjectScreen() {
       <FlatList
         contentContainerStyle={styles.container}
         data={projects?.getProjectsByUser}
-        renderItem={(project) => <ProjectCard project={project.item} />}
+        renderItem={({ item }) => <ProjectCard project={item} />}
         ListEmptyComponent={() => <Text>pas de projets en cours</Text>}
         onRefresh={refetch}
         refreshing={loading}
         onEndReached={() => fetchMore}
         initialNumToRender={5}
-        keyExtractor={(project) => project.id}
+        keyExtractor={(project) => project!.id}
       />
     </View>
   );
@@ -40,11 +47,79 @@ export default function ProjectScreen() {
 
 const ProjectCard = ({ project }: { project: Project }): JSX.Element => {
   const navigation = useNavigation();
+  const swipeableRef = useRef(null);
+  const user = userUtils.getCurrentUser();
+
+  const [deleteProjectMutation] = useDeleteProjectMutation({
+    variables: {
+      projectId: project?.id,
+    },
+    refetchQueries: "active",
+    onCompleted: () => {
+      Alert.alert("Projet supprimé", undefined);
+    },
+    onError: (e) => {
+      Alert.alert("Erreur lors de la suppression", undefined);
+      console.log(e);
+    },
+  });
+
+  const deleteProject = () => {
+    Alert.alert(
+      "Supprimer le projet?",
+      `Supprimer définitivement le projet : ${project?.name}`,
+      [
+        {
+          text: "Non",
+          onPress: () => {
+            swipeableRef?.current.close();
+          },
+        },
+        // The "Yes" button
+        {
+          text: "Oui",
+          onPress: () => {
+            deleteProjectMutation();
+          },
+        },
+      ]
+    );
+  };
+
+  const checkStatus = () => {
+    if (user?.getCurrentUser?.role !== (RoleSite.Po || RoleSite.Admin)) {
+      Alert.alert("tu n'as pas les droits");
+      swipeableRef.current.close();
+    }
+  };
+
+  const RightActions = () => {
+    const actionOne: JSX.Element = (
+      <TouchableOpacity
+        style={styles.rightAction}
+        key="actionOne"
+        onPress={deleteProject}
+      >
+        <Ionicons name="trash" size={40} color="red" />
+      </TouchableOpacity>
+    );
+
+    const actionTwo: JSX.Element = (
+      <TouchableOpacity style={styles.rightAction} key="actionTwo">
+        <Ionicons name="pencil" size={40} color="orange" />
+      </TouchableOpacity>
+    );
+    if (user?.getCurrentUser?.role !== (RoleSite.Po || RoleSite.Admin))
+      return null;
+    return [actionOne, actionTwo];
+  };
+
   return (
     <>
       <Swipeable
-        renderRightActions={RightAction}
-        onSwipeableRightOpen={() => console.log("will delete")}
+        ref={swipeableRef}
+        renderRightActions={RightActions}
+        onSwipeableRightWillOpen={checkStatus}
       >
         <Pressable
           style={styles.card}
@@ -73,14 +148,6 @@ const ProjectCard = ({ project }: { project: Project }): JSX.Element => {
         </Pressable>
       </Swipeable>
     </>
-  );
-};
-
-const RightAction = () => {
-  return (
-    <TouchableOpacity>
-      <Ionicons name="trash" size={30} color="red" />
-    </TouchableOpacity>
   );
 };
 
@@ -127,5 +194,8 @@ const styles = StyleSheet.create({
   textBadge: {
     fontSize: 10,
     fontWeight: "bold",
+  },
+  rightAction: {
+    justifyContent: "center",
   },
 });
