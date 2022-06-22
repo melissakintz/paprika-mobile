@@ -54,7 +54,7 @@ export default function taskProgress() {
             data={projects?.getProjectsByUser}
             renderItem={(project) => (
               <View>
-                <Text style={styles.listTask}>{project.index} => {project.item?.name}</Text>
+                <Text style={styles.listTask}>{project.index} `&gt;` {project.item?.name}</Text>
                 <Text style={styles.listTaskOne}><Ionicons name="person" />{project.item?.client}</Text>
               </View>
             )}      

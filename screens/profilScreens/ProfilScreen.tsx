@@ -5,7 +5,7 @@ import TaskProgress from "./TaskProgress";
 import InformationsUser from "./InformationsUser";
 import getUser from "../../utils/userUtils";
 
-export default function ProfilScreen({ route }: object) {
+export default function ProfilScreen({ route }: any) {
   const { user } = route.params;
   const currentUser = getUser.getCurrentUser();
 
