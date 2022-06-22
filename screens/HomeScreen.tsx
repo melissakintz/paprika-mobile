@@ -16,7 +16,7 @@ import CurrentTaskCard from "./components/homeComponent/CurrentTaskCard";
 import HelpCard from "./components/homeComponent/HelpCard";
 import ProjectByRole from "./components/homeComponent/ProjectByRole";
 
-const FadeInView = (props) => {
+const FadeInView = (props: any) => {
   const fadeAnim = useRef(new Animated.Value(0)).current
 
   useEffect(() => {
@@ -25,6 +25,7 @@ const FadeInView = (props) => {
       {
         toValue: 1,
         duration: 10000,
+        useNativeDriver: true,
       }
     ).start();
   }, [fadeAnim])
@@ -80,11 +81,11 @@ export default function HomeScreen({ navigation }: any) {
               style={styles.compteBtn}
               onPress={() => navigation.navigate("ProfilScreen", { currentUser })}
              >
-              <Text style={{ color: "#F2F2F2" }}>Mon profil</Text>
+              <Text style={{ color: "#F2F2F2", fontFamily: "Roboto" }}>Mon profil</Text>
             </TouchableOpacity>
 
             <TouchableOpacity style={styles.logoutBtn} onPress={logout}>
-              <Text style={{ color: "#F2F2F2" }}>Déconnexion</Text>
+              <Text style={{ color: "#F2F2F2", fontFamily: "Roboto" }}>Déconnexion</Text>
             </TouchableOpacity>
           </>
         ) : (
@@ -103,7 +104,7 @@ export default function HomeScreen({ navigation }: any) {
       </View>
       <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
         <FadeInView style={styles.containerTextAnimated}>
-          <Text style={styles.textAnimated}>Paprika</Text>
+          <Text style={styles.textAnimated}>Hello {currentUser?.getCurrentUser?.firstName}</Text>
         </FadeInView>
       </View>
       <TouchableOpacity
@@ -279,10 +280,13 @@ const styles = StyleSheet.create({
   containerTextAnimated: {
     width: 250,
     height: 70,
-    backgroundColor: 'grey'
+    backgroundColor: '#EFEFEF',
+    fontFamily: "Roboto"
   },
   containerImageAnimated: {
-    width: 250,
+    display: "flex",
+    flexDirection: "row",
+    width: 200,
     height: 300,
   }
 });
