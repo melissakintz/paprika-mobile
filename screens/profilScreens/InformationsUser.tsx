@@ -7,7 +7,7 @@ export default function InformationsUser({
     information,
 }: {
     name: string,
-    information: string | Array<ProjectRole>
+    information: string | Array<ProjectRole> | any
 }) {
   const currentUserTab = useGetAllUsersQuery();
   const currentUser = currentUserTab.data?.getAllUsers[0].id;
